@@ -1,0 +1,1752 @@
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Voltage_Monitoring.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.global	__aeabi_i2d
+  19              		.global	__aeabi_ddiv
+  20              		.global	__aeabi_dmul
+  21              		.global	__aeabi_d2f
+  22              		.section	.text.ADC_result_to_volts,"ax",%progbits
+  23              		.align	2
+  24              		.global	ADC_result_to_volts
+  25              		.thumb
+  26              		.thumb_func
+  27              		.type	ADC_result_to_volts, %function
+  28              	ADC_result_to_volts:
+  29              	.LFB63:
+  30              		.file 1 "Voltage_Monitoring.c"
+   1:Voltage_Monitoring.c **** 
+   2:Voltage_Monitoring.c **** /**
+   3:Voltage_Monitoring.c ****  * @file    Voltage_Monitoring.c
+   4:Voltage_Monitoring.c ****  * @brief   Custom file for measuring battery voltage (+ playing some warning sounds & flashing lig
+   5:Voltage_Monitoring.c ****  * @details  <br><br>
+   6:Voltage_Monitoring.c ****     <p>
+   7:Voltage_Monitoring.c ****     <B>General</B><br>
+   8:Voltage_Monitoring.c ****     The function Measure_Voltage() was used during development to measure the robot's battery volta
+   9:Voltage_Monitoring.c ****     (or thereabouts) while the robot was on. The logic was deleted from main.c in order not to inte
+  10:Voltage_Monitoring.c ****     included here for review.<br>
+  11:Voltage_Monitoring.c ****     <br><br>
+  12:Voltage_Monitoring.c ****     </p>
+  13:Voltage_Monitoring.c **** */
+  14:Voltage_Monitoring.c **** 
+  15:Voltage_Monitoring.c **** #include <project.h>
+  16:Voltage_Monitoring.c **** #include <stdio.h>
+  17:Voltage_Monitoring.c **** #include "Motor.h"
+  18:Voltage_Monitoring.c **** #include "Beep.h"
+  19:Voltage_Monitoring.c **** 
+  20:Voltage_Monitoring.c **** float ADC_result_to_volts(int16 adcresult);
+  21:Voltage_Monitoring.c **** void Beep(uint32 length, uint8 pitch);
+  22:Voltage_Monitoring.c **** void BatteryLed_Write(uint8 value);
+  23:Voltage_Monitoring.c **** uint8 BatteryLed_Read();
+  24:Voltage_Monitoring.c **** void motor_stop();
+  25:Voltage_Monitoring.c **** void Measure_Voltage();
+  26:Voltage_Monitoring.c **** 
+  27:Voltage_Monitoring.c **** // Subroutine for custom unit conversion (used below in Measure_Voltage()).
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 2
+
+
+  28:Voltage_Monitoring.c **** float ADC_result_to_volts(int16 adcresult)
+  29:Voltage_Monitoring.c **** {
+  31              		.loc 1 29 0
+  32              		.cfi_startproc
+  33              		@ args = 0, pretend = 0, frame = 0
+  34              		@ frame_needed = 0, uses_anonymous_args = 0
+  35              	.LVL0:
+  36 0000 08B5     		push	{r3, lr}
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 3, -8
+  39              		.cfi_offset 14, -4
+  30:Voltage_Monitoring.c ****     float volts;
+  31:Voltage_Monitoring.c ****     
+  32:Voltage_Monitoring.c ****     // returns the actual battery voltage (4.1 - 5.6 V)
+  33:Voltage_Monitoring.c ****     volts = (adcresult / 4095.0) * (1.5 * 5.0);
+  40              		.loc 1 33 0
+  41 0002 FFF7FEFF 		bl	__aeabi_i2d
+  42              	.LVL1:
+  43 0006 06A3     		adr	r3, .L3
+  44 0008 D3E90023 		ldrd	r2, [r3]
+  45 000c FFF7FEFF 		bl	__aeabi_ddiv
+  46              	.LVL2:
+  47 0010 0022     		movs	r2, #0
+  48 0012 054B     		ldr	r3, .L3+8
+  49 0014 FFF7FEFF 		bl	__aeabi_dmul
+  50              	.LVL3:
+  51 0018 FFF7FEFF 		bl	__aeabi_d2f
+  52              	.LVL4:
+  34:Voltage_Monitoring.c ****     
+  35:Voltage_Monitoring.c ****     return volts;
+  36:Voltage_Monitoring.c ****     
+  37:Voltage_Monitoring.c **** }
+  53              		.loc 1 37 0
+  54 001c 08BD     		pop	{r3, pc}
+  55              	.L4:
+  56 001e 00BF     		.align	3
+  57              	.L3:
+  58 0020 00000000 		.word	0
+  59 0024 00FEAF40 		.word	1085275648
+  60 0028 00001E40 		.word	1075707904
+  61              		.cfi_endproc
+  62              	.LFE63:
+  63              		.size	ADC_result_to_volts, .-ADC_result_to_volts
+  64              		.global	__aeabi_fcmpgt
+  65              		.global	__aeabi_fcmpge
+  66              		.global	__aeabi_fcmplt
+  67              		.global	__aeabi_f2d
+  68              		.global	__aeabi_dcmpge
+  69              		.global	__aeabi_dcmplt
+  70 002c AFF30080 		.section	.text.Measure_Voltage,"ax",%progbits
+  71              		.align	2
+  72              		.global	Measure_Voltage
+  73              		.thumb
+  74              		.thumb_func
+  75              		.type	Measure_Voltage, %function
+  76              	Measure_Voltage:
+  77              	.LFB64:
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 3
+
+
+  38:Voltage_Monitoring.c **** 
+  39:Voltage_Monitoring.c **** // For measuring the voltage of the batteries at regular intervals. (Used in main.c.)
+  40:Voltage_Monitoring.c **** void Measure_Voltage()
+  41:Voltage_Monitoring.c **** {
+  78              		.loc 1 41 0
+  79              		.cfi_startproc
+  80              		@ args = 0, pretend = 0, frame = 0
+  81              		@ frame_needed = 0, uses_anonymous_args = 0
+  82 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+  83              		.cfi_def_cfa_offset 24
+  84              		.cfi_offset 3, -24
+  85              		.cfi_offset 4, -20
+  86              		.cfi_offset 5, -16
+  87              		.cfi_offset 6, -12
+  88              		.cfi_offset 7, -8
+  89              		.cfi_offset 14, -4
+  90              	.LVL5:
+  42:Voltage_Monitoring.c ****     int16 adcresult = 0;
+  43:Voltage_Monitoring.c ****     float volts = 0.0;
+  44:Voltage_Monitoring.c ****     
+  45:Voltage_Monitoring.c ****     int i;
+  46:Voltage_Monitoring.c ****     
+  47:Voltage_Monitoring.c ****     ADC_Battery_StartConvert();
+  91              		.loc 1 47 0
+  92 0002 FFF7FEFF 		bl	ADC_Battery_StartConvert
+  93              	.LVL6:
+  48:Voltage_Monitoring.c ****     if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) 
+  94              		.loc 1 48 0
+  95 0006 0020     		movs	r0, #0
+  96 0008 FFF7FEFF 		bl	ADC_Battery_IsEndConversion
+  97              	.LVL7:
+  98 000c 0028     		cmp	r0, #0
+  99 000e 00F0A180 		beq	.L5
+  49:Voltage_Monitoring.c ****     {   // wait for get ADC converted value
+  50:Voltage_Monitoring.c ****         adcresult = ADC_Battery_GetResult16();
+ 100              		.loc 1 50 0
+ 101 0012 FFF7FEFF 		bl	ADC_Battery_GetResult16
+ 102              	.LVL8:
+ 103 0016 0746     		mov	r7, r0
+ 104              	.LVL9:
+  51:Voltage_Monitoring.c ****         volts = ADC_result_to_volts(adcresult); // convert value to volts
+ 105              		.loc 1 51 0
+ 106 0018 FFF7FEFF 		bl	ADC_result_to_volts
+ 107              	.LVL10:
+ 108 001c 0646     		mov	r6, r0
+ 109              	.LVL11:
+  52:Voltage_Monitoring.c ****         
+  53:Voltage_Monitoring.c ****         // Different types of beep sounds for different voltage levels. If the charge is over 5.0 V
+  54:Voltage_Monitoring.c ****         // three long and low-sounding beeps; from 5.0 to 4.5 V, six medium-length, medium-pitch be
+  55:Voltage_Monitoring.c ****         // 4.1 V, 9 loud and sharp beeps; and finally if the voltage reaches 4.1 V, there will be a
+  56:Voltage_Monitoring.c ****         // flurry of extremely short and sharp beeps.
+  57:Voltage_Monitoring.c ****         // EDIT: Added flashing light effects to go with the beeps :)
+  58:Voltage_Monitoring.c ****         if (volts > 0.5) // a lenient 'null check' is needed to prevent alarms when the robot is of
+ 110              		.loc 1 58 0
+ 111 001e 4FF07C51 		mov	r1, #1056964608
+ 112 0022 FFF7FEFF 		bl	__aeabi_fcmpgt
+ 113              	.LVL12:
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 4
+
+
+ 114 0026 0028     		cmp	r0, #0
+ 115 0028 00F09080 		beq	.L7
+  59:Voltage_Monitoring.c ****                          // as startup occasionally, so the problem was not fully fixed with this c
+  60:Voltage_Monitoring.c ****         {
+  61:Voltage_Monitoring.c ****         
+  62:Voltage_Monitoring.c ****             if (volts >= 5.0)
+ 116              		.loc 1 62 0
+ 117 002c 3046     		mov	r0, r6
+ 118 002e 4C49     		ldr	r1, .L32+8
+ 119 0030 FFF7FEFF 		bl	__aeabi_fcmpge
+ 120              	.LVL13:
+ 121 0034 90B9     		cbnz	r0, .L23
+ 122 0036 15E0     		b	.L30
+ 123              	.LVL14:
+ 124              	.L11:
+  63:Voltage_Monitoring.c ****             { for (i = 0; i < 3; i++) 
+  64:Voltage_Monitoring.c ****                 {
+  65:Voltage_Monitoring.c ****                     Beep(80, 60);
+ 125              		.loc 1 65 0 discriminator 3
+ 126 0038 5020     		movs	r0, #80
+ 127 003a 3C21     		movs	r1, #60
+ 128 003c FFF7FEFF 		bl	Beep
+ 129              	.LVL15:
+  66:Voltage_Monitoring.c ****                     BatteryLed_Write(1);
+ 130              		.loc 1 66 0 discriminator 3
+ 131 0040 0120     		movs	r0, #1
+ 132 0042 FFF7FEFF 		bl	BatteryLed_Write
+ 133              	.LVL16:
+  67:Voltage_Monitoring.c ****                     BatteryLed_Read();
+ 134              		.loc 1 67 0 discriminator 3
+ 135 0046 FFF7FEFF 		bl	BatteryLed_Read
+ 136              	.LVL17:
+  68:Voltage_Monitoring.c ****                     CyDelay(600);
+ 137              		.loc 1 68 0 discriminator 3
+ 138 004a 4FF41670 		mov	r0, #600
+ 139 004e FFF7FEFF 		bl	CyDelay
+ 140              	.LVL18:
+  69:Voltage_Monitoring.c ****                     BatteryLed_Write(0);
+ 141              		.loc 1 69 0 discriminator 3
+ 142 0052 0020     		movs	r0, #0
+ 143 0054 FFF7FEFF 		bl	BatteryLed_Write
+ 144              	.LVL19:
+  63:Voltage_Monitoring.c ****                 {
+ 145              		.loc 1 63 0 discriminator 3
+ 146 0058 0134     		adds	r4, r4, #1
+ 147              	.LVL20:
+ 148 005a 00E0     		b	.L9
+ 149              	.LVL21:
+ 150              	.L23:
+ 151 005c 0024     		movs	r4, #0
+ 152              	.L9:
+ 153              	.LVL22:
+  63:Voltage_Monitoring.c ****                 {
+ 154              		.loc 1 63 0 is_stmt 0 discriminator 1
+ 155 005e 022C     		cmp	r4, #2
+ 156 0060 EADD     		ble	.L11
+ 157 0062 6AE0     		b	.L12
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 5
+
+
+ 158              	.LVL23:
+ 159              	.L30:
+  70:Voltage_Monitoring.c ****                 }
+  71:Voltage_Monitoring.c ****             } else if (volts < 5.0 && volts >= 4.5) {
+ 160              		.loc 1 71 0 is_stmt 1
+ 161 0064 3046     		mov	r0, r6
+ 162 0066 3E49     		ldr	r1, .L32+8
+ 163 0068 FFF7FEFF 		bl	__aeabi_fcmplt
+ 164              	.LVL24:
+ 165 006c D8B1     		cbz	r0, .L13
+ 166              		.loc 1 71 0 is_stmt 0 discriminator 1
+ 167 006e 3046     		mov	r0, r6
+ 168 0070 3C49     		ldr	r1, .L32+12
+ 169 0072 FFF7FEFF 		bl	__aeabi_fcmpge
+ 170              	.LVL25:
+ 171 0076 90B9     		cbnz	r0, .L24
+ 172 0078 15E0     		b	.L13
+ 173              	.LVL26:
+ 174              	.L16:
+  72:Voltage_Monitoring.c ****              for (i = 0; i < 6; i++) 
+  73:Voltage_Monitoring.c ****                 {
+  74:Voltage_Monitoring.c ****                     Beep(40, 80);
+ 175              		.loc 1 74 0 is_stmt 1 discriminator 3
+ 176 007a 2820     		movs	r0, #40
+ 177 007c 5021     		movs	r1, #80
+ 178 007e FFF7FEFF 		bl	Beep
+ 179              	.LVL27:
+  75:Voltage_Monitoring.c ****                     BatteryLed_Write(1);
+ 180              		.loc 1 75 0 discriminator 3
+ 181 0082 0120     		movs	r0, #1
+ 182 0084 FFF7FEFF 		bl	BatteryLed_Write
+ 183              	.LVL28:
+  76:Voltage_Monitoring.c ****                     BatteryLed_Read();
+ 184              		.loc 1 76 0 discriminator 3
+ 185 0088 FFF7FEFF 		bl	BatteryLed_Read
+ 186              	.LVL29:
+  77:Voltage_Monitoring.c ****                     CyDelay(500);
+ 187              		.loc 1 77 0 discriminator 3
+ 188 008c 4FF4FA70 		mov	r0, #500
+ 189 0090 FFF7FEFF 		bl	CyDelay
+ 190              	.LVL30:
+  78:Voltage_Monitoring.c ****                     BatteryLed_Write(0);
+ 191              		.loc 1 78 0 discriminator 3
+ 192 0094 0020     		movs	r0, #0
+ 193 0096 FFF7FEFF 		bl	BatteryLed_Write
+ 194              	.LVL31:
+  72:Voltage_Monitoring.c ****                 {
+ 195              		.loc 1 72 0 discriminator 3
+ 196 009a 0134     		adds	r4, r4, #1
+ 197              	.LVL32:
+ 198 009c 00E0     		b	.L15
+ 199              	.LVL33:
+ 200              	.L24:
+ 201 009e 0024     		movs	r4, #0
+ 202              	.L15:
+ 203              	.LVL34:
+  72:Voltage_Monitoring.c ****                 {
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 6
+
+
+ 204              		.loc 1 72 0 is_stmt 0 discriminator 1
+ 205 00a0 052C     		cmp	r4, #5
+ 206 00a2 EADD     		ble	.L16
+ 207 00a4 49E0     		b	.L12
+ 208              	.LVL35:
+ 209              	.L13:
+  79:Voltage_Monitoring.c ****                 }            
+  80:Voltage_Monitoring.c ****             } else if (volts < 4.5 && volts >= 4.1) {
+ 210              		.loc 1 80 0 is_stmt 1
+ 211 00a6 3046     		mov	r0, r6
+ 212 00a8 2E49     		ldr	r1, .L32+12
+ 213 00aa FFF7FEFF 		bl	__aeabi_fcmplt
+ 214              	.LVL36:
+ 215 00ae F8B1     		cbz	r0, .L17
+ 216              		.loc 1 80 0 is_stmt 0 discriminator 1
+ 217 00b0 3046     		mov	r0, r6
+ 218 00b2 FFF7FEFF 		bl	__aeabi_f2d
+ 219              	.LVL37:
+ 220 00b6 28A3     		adr	r3, .L32
+ 221 00b8 D3E90023 		ldrd	r2, [r3]
+ 222 00bc FFF7FEFF 		bl	__aeabi_dcmpge
+ 223              	.LVL38:
+ 224 00c0 90B9     		cbnz	r0, .L25
+ 225 00c2 15E0     		b	.L17
+ 226              	.LVL39:
+ 227              	.L20:
+  81:Voltage_Monitoring.c ****             
+  82:Voltage_Monitoring.c ****                 for (i = 0; i < 9; i++) 
+  83:Voltage_Monitoring.c ****                 {
+  84:Voltage_Monitoring.c ****                     Beep(30, 95);
+ 228              		.loc 1 84 0 is_stmt 1 discriminator 3
+ 229 00c4 1E20     		movs	r0, #30
+ 230 00c6 5F21     		movs	r1, #95
+ 231 00c8 FFF7FEFF 		bl	Beep
+ 232              	.LVL40:
+  85:Voltage_Monitoring.c ****                     BatteryLed_Write(1);
+ 233              		.loc 1 85 0 discriminator 3
+ 234 00cc 0120     		movs	r0, #1
+ 235 00ce FFF7FEFF 		bl	BatteryLed_Write
+ 236              	.LVL41:
+  86:Voltage_Monitoring.c ****                     BatteryLed_Read();
+ 237              		.loc 1 86 0 discriminator 3
+ 238 00d2 FFF7FEFF 		bl	BatteryLed_Read
+ 239              	.LVL42:
+  87:Voltage_Monitoring.c ****                     CyDelay(400);
+ 240              		.loc 1 87 0 discriminator 3
+ 241 00d6 4FF4C870 		mov	r0, #400
+ 242 00da FFF7FEFF 		bl	CyDelay
+ 243              	.LVL43:
+  88:Voltage_Monitoring.c ****                     BatteryLed_Write(0);
+ 244              		.loc 1 88 0 discriminator 3
+ 245 00de 0020     		movs	r0, #0
+ 246 00e0 FFF7FEFF 		bl	BatteryLed_Write
+ 247              	.LVL44:
+  82:Voltage_Monitoring.c ****                 {
+ 248              		.loc 1 82 0 discriminator 3
+ 249 00e4 0134     		adds	r4, r4, #1
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 7
+
+
+ 250              	.LVL45:
+ 251 00e6 00E0     		b	.L19
+ 252              	.LVL46:
+ 253              	.L25:
+ 254 00e8 0024     		movs	r4, #0
+ 255              	.L19:
+ 256              	.LVL47:
+  82:Voltage_Monitoring.c ****                 {
+ 257              		.loc 1 82 0 is_stmt 0 discriminator 1
+ 258 00ea 082C     		cmp	r4, #8
+ 259 00ec EADD     		ble	.L20
+ 260 00ee 24E0     		b	.L12
+ 261              	.LVL48:
+ 262              	.L17:
+  89:Voltage_Monitoring.c ****                 }       
+  90:Voltage_Monitoring.c ****             } else if (volts < 4.1) {
+ 263              		.loc 1 90 0 is_stmt 1
+ 264 00f0 3046     		mov	r0, r6
+ 265 00f2 FFF7FEFF 		bl	__aeabi_f2d
+ 266              	.LVL49:
+ 267 00f6 0446     		mov	r4, r0
+ 268 00f8 0D46     		mov	r5, r1
+ 269 00fa 17A3     		adr	r3, .L32
+ 270 00fc D3E90023 		ldrd	r2, [r3]
+ 271 0100 FFF7FEFF 		bl	__aeabi_dcmplt
+ 272              	.LVL50:
+ 273 0104 C8B1     		cbz	r0, .L12
+  91:Voltage_Monitoring.c ****                 
+  92:Voltage_Monitoring.c ****                 motor_stop(); // what else needs to be stopped?
+ 274              		.loc 1 92 0
+ 275 0106 FFF7FEFF 		bl	motor_stop
+ 276              	.LVL51:
+ 277              	.L22:
+  93:Voltage_Monitoring.c ****             
+  94:Voltage_Monitoring.c ****                 while (1) 
+  95:Voltage_Monitoring.c ****                 {
+  96:Voltage_Monitoring.c ****                     Beep(20, 110);
+ 278              		.loc 1 96 0 discriminator 1
+ 279 010a 1420     		movs	r0, #20
+ 280 010c 6E21     		movs	r1, #110
+ 281 010e FFF7FEFF 		bl	Beep
+ 282              	.LVL52:
+  97:Voltage_Monitoring.c ****                     BatteryLed_Write(1);
+ 283              		.loc 1 97 0 discriminator 1
+ 284 0112 0120     		movs	r0, #1
+ 285 0114 FFF7FEFF 		bl	BatteryLed_Write
+ 286              	.LVL53:
+  98:Voltage_Monitoring.c ****                     BatteryLed_Read();
+ 287              		.loc 1 98 0 discriminator 1
+ 288 0118 FFF7FEFF 		bl	BatteryLed_Read
+ 289              	.LVL54:
+  99:Voltage_Monitoring.c ****                     CyDelay(200);
+ 290              		.loc 1 99 0 discriminator 1
+ 291 011c C820     		movs	r0, #200
+ 292 011e FFF7FEFF 		bl	CyDelay
+ 293              	.LVL55:
+ 100:Voltage_Monitoring.c ****                     BatteryLed_Write(0);
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 8
+
+
+ 294              		.loc 1 100 0 discriminator 1
+ 295 0122 0020     		movs	r0, #0
+ 296 0124 FFF7FEFF 		bl	BatteryLed_Write
+ 297              	.LVL56:
+ 101:Voltage_Monitoring.c ****                     printf("%f \n", volts);
+ 298              		.loc 1 101 0 discriminator 1
+ 299 0128 0F48     		ldr	r0, .L32+16
+ 300 012a 2246     		mov	r2, r4
+ 301 012c 2B46     		mov	r3, r5
+ 302 012e FFF7FEFF 		bl	printf
+ 303              	.LVL57:
+ 102:Voltage_Monitoring.c ****                     printf("DANGER! Battery LOW! Please charge ASAP!!!\n");
+ 304              		.loc 1 102 0 discriminator 1
+ 305 0132 0E48     		ldr	r0, .L32+20
+ 306 0134 FFF7FEFF 		bl	puts
+ 307              	.LVL58:
+ 103:Voltage_Monitoring.c ****                 }                      
+ 308              		.loc 1 103 0 discriminator 1
+ 309 0138 E7E7     		b	.L22
+ 310              	.L12:
+ 104:Voltage_Monitoring.c ****             }
+ 105:Voltage_Monitoring.c ****                   
+ 106:Voltage_Monitoring.c ****             // Print bit & voltage values
+ 107:Voltage_Monitoring.c ****             printf("%d %f\r\n",adcresult, volts);
+ 311              		.loc 1 107 0
+ 312 013a 3046     		mov	r0, r6
+ 313 013c FFF7FEFF 		bl	__aeabi_f2d
+ 314              	.LVL59:
+ 315 0140 0246     		mov	r2, r0
+ 316 0142 0B46     		mov	r3, r1
+ 317 0144 0A48     		ldr	r0, .L32+24
+ 318 0146 3946     		mov	r1, r7
+ 319 0148 FFF7FEFF 		bl	printf
+ 320              	.LVL60:
+ 321              	.L7:
+ 108:Voltage_Monitoring.c ****         }
+ 109:Voltage_Monitoring.c ****             CyDelay(500);
+ 322              		.loc 1 109 0
+ 323 014c 4FF4FA70 		mov	r0, #500
+ 324 0150 FFF7FEFF 		bl	CyDelay
+ 325              	.LVL61:
+ 326              	.L5:
+ 327 0154 F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 328              	.L33:
+ 329 0156 00BF     		.align	3
+ 330              	.L32:
+ 331 0158 66666666 		.word	1717986918
+ 332 015c 66661040 		.word	1074816614
+ 333 0160 0000A040 		.word	1084227584
+ 334 0164 00009040 		.word	1083179008
+ 335 0168 00000000 		.word	.LC0
+ 336 016c 08000000 		.word	.LC1
+ 337 0170 34000000 		.word	.LC2
+ 338              		.cfi_endproc
+ 339              	.LFE64:
+ 340              		.size	Measure_Voltage, .-Measure_Voltage
+ 341 0174 AFF30080 		.section	.rodata.str1.4,"aMS",%progbits,1
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 9
+
+
+ 342              		.align	2
+ 343              	.LC0:
+ 344 0000 2566200A 		.ascii	"%f \012\000"
+ 344      00
+ 345 0005 000000   		.space	3
+ 346              	.LC1:
+ 347 0008 44414E47 		.ascii	"DANGER! Battery LOW! Please charge ASAP!!!\000"
+ 347      45522120 
+ 347      42617474 
+ 347      65727920 
+ 347      4C4F5721 
+ 348 0033 00       		.space	1
+ 349              	.LC2:
+ 350 0034 25642025 		.ascii	"%d %f\015\012\000"
+ 350      660D0A00 
+ 351              		.text
+ 352              	.Letext0:
+ 353              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 354              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 355              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 356              		.file 5 "Generated_Source\\PSoC5/ADC_Battery.h"
+ 357              		.file 6 "Generated_Source\\PSoC5/BatteryLed.h"
+ 358              		.file 7 "Generated_Source\\PSoC5/CyLib.h"
+ 359              		.file 8 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 360              		.file 9 "<built-in>"
+ 361              		.file 10 "Generated_Source\\PSoC5/core_cm3.h"
+ 362              		.section	.debug_info,"",%progbits
+ 363              	.Ldebug_info0:
+ 364 0000 06040000 		.4byte	0x406
+ 365 0004 0400     		.2byte	0x4
+ 366 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 367 000a 04       		.byte	0x4
+ 368 000b 01       		.uleb128 0x1
+ 369 000c C7000000 		.4byte	.LASF28
+ 370 0010 01       		.byte	0x1
+ 371 0011 59000000 		.4byte	.LASF29
+ 372 0015 0E020000 		.4byte	.LASF30
+ 373 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 374 001d 00000000 		.4byte	0
+ 375 0021 00000000 		.4byte	.Ldebug_line0
+ 376 0025 02       		.uleb128 0x2
+ 377 0026 01       		.byte	0x1
+ 378 0027 06       		.byte	0x6
+ 379 0028 53020000 		.4byte	.LASF0
+ 380 002c 02       		.uleb128 0x2
+ 381 002d 01       		.byte	0x1
+ 382 002e 08       		.byte	0x8
+ 383 002f 33000000 		.4byte	.LASF1
+ 384 0033 02       		.uleb128 0x2
+ 385 0034 02       		.byte	0x2
+ 386 0035 05       		.byte	0x5
+ 387 0036 FE010000 		.4byte	.LASF2
+ 388 003a 02       		.uleb128 0x2
+ 389 003b 02       		.byte	0x2
+ 390 003c 07       		.byte	0x7
+ 391 003d 6E000000 		.4byte	.LASF3
+ 392 0041 03       		.uleb128 0x3
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 10
+
+
+ 393 0042 00000000 		.4byte	.LASF9
+ 394 0046 02       		.byte	0x2
+ 395 0047 3F       		.byte	0x3f
+ 396 0048 4C000000 		.4byte	0x4c
+ 397 004c 02       		.uleb128 0x2
+ 398 004d 04       		.byte	0x4
+ 399 004e 05       		.byte	0x5
+ 400 004f 45020000 		.4byte	.LASF4
+ 401 0053 02       		.uleb128 0x2
+ 402 0054 04       		.byte	0x4
+ 403 0055 07       		.byte	0x7
+ 404 0056 47000000 		.4byte	.LASF5
+ 405 005a 02       		.uleb128 0x2
+ 406 005b 08       		.byte	0x8
+ 407 005c 05       		.byte	0x5
+ 408 005d AD010000 		.4byte	.LASF6
+ 409 0061 02       		.uleb128 0x2
+ 410 0062 08       		.byte	0x8
+ 411 0063 07       		.byte	0x7
+ 412 0064 7A010000 		.4byte	.LASF7
+ 413 0068 04       		.uleb128 0x4
+ 414 0069 04       		.byte	0x4
+ 415 006a 05       		.byte	0x5
+ 416 006b 696E7400 		.ascii	"int\000"
+ 417 006f 02       		.uleb128 0x2
+ 418 0070 04       		.byte	0x4
+ 419 0071 07       		.byte	0x7
+ 420 0072 55010000 		.4byte	.LASF8
+ 421 0076 03       		.uleb128 0x3
+ 422 0077 9C010000 		.4byte	.LASF10
+ 423 007b 03       		.byte	0x3
+ 424 007c 2C       		.byte	0x2c
+ 425 007d 41000000 		.4byte	0x41
+ 426 0081 05       		.uleb128 0x5
+ 427 0082 08020000 		.4byte	.LASF11
+ 428 0086 04       		.byte	0x4
+ 429 0087 9201     		.2byte	0x192
+ 430 0089 2C000000 		.4byte	0x2c
+ 431 008d 05       		.uleb128 0x5
+ 432 008e C0000000 		.4byte	.LASF12
+ 433 0092 04       		.byte	0x4
+ 434 0093 9401     		.2byte	0x194
+ 435 0095 53000000 		.4byte	0x53
+ 436 0099 05       		.uleb128 0x5
+ 437 009a 41000000 		.4byte	.LASF13
+ 438 009e 04       		.byte	0x4
+ 439 009f 9601     		.2byte	0x196
+ 440 00a1 33000000 		.4byte	0x33
+ 441 00a5 02       		.uleb128 0x2
+ 442 00a6 04       		.byte	0x4
+ 443 00a7 04       		.byte	0x4
+ 444 00a8 1E000000 		.4byte	.LASF14
+ 445 00ac 02       		.uleb128 0x2
+ 446 00ad 08       		.byte	0x8
+ 447 00ae 04       		.byte	0x4
+ 448 00af AE000000 		.4byte	.LASF15
+ 449 00b3 02       		.uleb128 0x2
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 11
+
+
+ 450 00b4 01       		.byte	0x1
+ 451 00b5 08       		.byte	0x8
+ 452 00b6 CC010000 		.4byte	.LASF16
+ 453 00ba 02       		.uleb128 0x2
+ 454 00bb 04       		.byte	0x4
+ 455 00bc 07       		.byte	0x7
+ 456 00bd A4010000 		.4byte	.LASF17
+ 457 00c1 06       		.uleb128 0x6
+ 458 00c2 04       		.byte	0x4
+ 459 00c3 C7000000 		.4byte	0xc7
+ 460 00c7 07       		.uleb128 0x7
+ 461 00c8 B3000000 		.4byte	0xb3
+ 462 00cc 08       		.uleb128 0x8
+ 463 00cd 0A000000 		.4byte	.LASF31
+ 464 00d1 01       		.byte	0x1
+ 465 00d2 1C       		.byte	0x1c
+ 466 00d3 A5000000 		.4byte	0xa5
+ 467 00d7 00000000 		.4byte	.LFB63
+ 468 00db 2C000000 		.4byte	.LFE63-.LFB63
+ 469 00df 01       		.uleb128 0x1
+ 470 00e0 9C       		.byte	0x9c
+ 471 00e1 02010000 		.4byte	0x102
+ 472 00e5 09       		.uleb128 0x9
+ 473 00e6 D1010000 		.4byte	.LASF19
+ 474 00ea 01       		.byte	0x1
+ 475 00eb 1C       		.byte	0x1c
+ 476 00ec 99000000 		.4byte	0x99
+ 477 00f0 00000000 		.4byte	.LLST0
+ 478 00f4 0A       		.uleb128 0xa
+ 479 00f5 96010000 		.4byte	.LASF18
+ 480 00f9 01       		.byte	0x1
+ 481 00fa 1E       		.byte	0x1e
+ 482 00fb A5000000 		.4byte	0xa5
+ 483 00ff 01       		.uleb128 0x1
+ 484 0100 50       		.byte	0x50
+ 485 0101 00       		.byte	0
+ 486 0102 0B       		.uleb128 0xb
+ 487 0103 81000000 		.4byte	.LASF32
+ 488 0107 01       		.byte	0x1
+ 489 0108 28       		.byte	0x28
+ 490 0109 00000000 		.4byte	.LFB64
+ 491 010d 74010000 		.4byte	.LFE64-.LFB64
+ 492 0111 01       		.uleb128 0x1
+ 493 0112 9C       		.byte	0x9c
+ 494 0113 56030000 		.4byte	0x356
+ 495 0117 0C       		.uleb128 0xc
+ 496 0118 D1010000 		.4byte	.LASF19
+ 497 011c 01       		.byte	0x1
+ 498 011d 2A       		.byte	0x2a
+ 499 011e 99000000 		.4byte	0x99
+ 500 0122 21000000 		.4byte	.LLST1
+ 501 0126 0C       		.uleb128 0xc
+ 502 0127 96010000 		.4byte	.LASF18
+ 503 012b 01       		.byte	0x1
+ 504 012c 2B       		.byte	0x2b
+ 505 012d A5000000 		.4byte	0xa5
+ 506 0131 40000000 		.4byte	.LLST2
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 12
+
+
+ 507 0135 0D       		.uleb128 0xd
+ 508 0136 6900     		.ascii	"i\000"
+ 509 0138 01       		.byte	0x1
+ 510 0139 2D       		.byte	0x2d
+ 511 013a 68000000 		.4byte	0x68
+ 512 013e 6E000000 		.4byte	.LLST3
+ 513 0142 0E       		.uleb128 0xe
+ 514 0143 06000000 		.4byte	.LVL6
+ 515 0147 67030000 		.4byte	0x367
+ 516 014b 0F       		.uleb128 0xf
+ 517 014c 0C000000 		.4byte	.LVL7
+ 518 0150 6E030000 		.4byte	0x36e
+ 519 0154 5E010000 		.4byte	0x15e
+ 520 0158 10       		.uleb128 0x10
+ 521 0159 01       		.uleb128 0x1
+ 522 015a 50       		.byte	0x50
+ 523 015b 01       		.uleb128 0x1
+ 524 015c 30       		.byte	0x30
+ 525 015d 00       		.byte	0
+ 526 015e 0E       		.uleb128 0xe
+ 527 015f 16000000 		.4byte	.LVL8
+ 528 0163 83030000 		.4byte	0x383
+ 529 0167 0F       		.uleb128 0xf
+ 530 0168 1C000000 		.4byte	.LVL10
+ 531 016c CC000000 		.4byte	0xcc
+ 532 0170 7B010000 		.4byte	0x17b
+ 533 0174 10       		.uleb128 0x10
+ 534 0175 01       		.uleb128 0x1
+ 535 0176 50       		.byte	0x50
+ 536 0177 02       		.uleb128 0x2
+ 537 0178 77       		.byte	0x77
+ 538 0179 00       		.sleb128 0
+ 539 017a 00       		.byte	0
+ 540 017b 0F       		.uleb128 0xf
+ 541 017c 40000000 		.4byte	.LVL15
+ 542 0180 8E030000 		.4byte	0x38e
+ 543 0184 95010000 		.4byte	0x195
+ 544 0188 10       		.uleb128 0x10
+ 545 0189 01       		.uleb128 0x1
+ 546 018a 51       		.byte	0x51
+ 547 018b 02       		.uleb128 0x2
+ 548 018c 08       		.byte	0x8
+ 549 018d 3C       		.byte	0x3c
+ 550 018e 10       		.uleb128 0x10
+ 551 018f 01       		.uleb128 0x1
+ 552 0190 50       		.byte	0x50
+ 553 0191 02       		.uleb128 0x2
+ 554 0192 08       		.byte	0x8
+ 555 0193 50       		.byte	0x50
+ 556 0194 00       		.byte	0
+ 557 0195 0F       		.uleb128 0xf
+ 558 0196 46000000 		.4byte	.LVL16
+ 559 019a A4030000 		.4byte	0x3a4
+ 560 019e A8010000 		.4byte	0x1a8
+ 561 01a2 10       		.uleb128 0x10
+ 562 01a3 01       		.uleb128 0x1
+ 563 01a4 50       		.byte	0x50
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 13
+
+
+ 564 01a5 01       		.uleb128 0x1
+ 565 01a6 31       		.byte	0x31
+ 566 01a7 00       		.byte	0
+ 567 01a8 0E       		.uleb128 0xe
+ 568 01a9 4A000000 		.4byte	.LVL17
+ 569 01ad B5030000 		.4byte	0x3b5
+ 570 01b1 0F       		.uleb128 0xf
+ 571 01b2 52000000 		.4byte	.LVL18
+ 572 01b6 C0030000 		.4byte	0x3c0
+ 573 01ba C6010000 		.4byte	0x1c6
+ 574 01be 10       		.uleb128 0x10
+ 575 01bf 01       		.uleb128 0x1
+ 576 01c0 50       		.byte	0x50
+ 577 01c1 03       		.uleb128 0x3
+ 578 01c2 0A       		.byte	0xa
+ 579 01c3 5802     		.2byte	0x258
+ 580 01c5 00       		.byte	0
+ 581 01c6 0F       		.uleb128 0xf
+ 582 01c7 58000000 		.4byte	.LVL19
+ 583 01cb A4030000 		.4byte	0x3a4
+ 584 01cf D9010000 		.4byte	0x1d9
+ 585 01d3 10       		.uleb128 0x10
+ 586 01d4 01       		.uleb128 0x1
+ 587 01d5 50       		.byte	0x50
+ 588 01d6 01       		.uleb128 0x1
+ 589 01d7 30       		.byte	0x30
+ 590 01d8 00       		.byte	0
+ 591 01d9 0F       		.uleb128 0xf
+ 592 01da 82000000 		.4byte	.LVL27
+ 593 01de 8E030000 		.4byte	0x38e
+ 594 01e2 F3010000 		.4byte	0x1f3
+ 595 01e6 10       		.uleb128 0x10
+ 596 01e7 01       		.uleb128 0x1
+ 597 01e8 51       		.byte	0x51
+ 598 01e9 02       		.uleb128 0x2
+ 599 01ea 08       		.byte	0x8
+ 600 01eb 50       		.byte	0x50
+ 601 01ec 10       		.uleb128 0x10
+ 602 01ed 01       		.uleb128 0x1
+ 603 01ee 50       		.byte	0x50
+ 604 01ef 02       		.uleb128 0x2
+ 605 01f0 08       		.byte	0x8
+ 606 01f1 28       		.byte	0x28
+ 607 01f2 00       		.byte	0
+ 608 01f3 0F       		.uleb128 0xf
+ 609 01f4 88000000 		.4byte	.LVL28
+ 610 01f8 A4030000 		.4byte	0x3a4
+ 611 01fc 06020000 		.4byte	0x206
+ 612 0200 10       		.uleb128 0x10
+ 613 0201 01       		.uleb128 0x1
+ 614 0202 50       		.byte	0x50
+ 615 0203 01       		.uleb128 0x1
+ 616 0204 31       		.byte	0x31
+ 617 0205 00       		.byte	0
+ 618 0206 0E       		.uleb128 0xe
+ 619 0207 8C000000 		.4byte	.LVL29
+ 620 020b B5030000 		.4byte	0x3b5
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 14
+
+
+ 621 020f 0F       		.uleb128 0xf
+ 622 0210 94000000 		.4byte	.LVL30
+ 623 0214 C0030000 		.4byte	0x3c0
+ 624 0218 24020000 		.4byte	0x224
+ 625 021c 10       		.uleb128 0x10
+ 626 021d 01       		.uleb128 0x1
+ 627 021e 50       		.byte	0x50
+ 628 021f 03       		.uleb128 0x3
+ 629 0220 0A       		.byte	0xa
+ 630 0221 F401     		.2byte	0x1f4
+ 631 0223 00       		.byte	0
+ 632 0224 0F       		.uleb128 0xf
+ 633 0225 9A000000 		.4byte	.LVL31
+ 634 0229 A4030000 		.4byte	0x3a4
+ 635 022d 37020000 		.4byte	0x237
+ 636 0231 10       		.uleb128 0x10
+ 637 0232 01       		.uleb128 0x1
+ 638 0233 50       		.byte	0x50
+ 639 0234 01       		.uleb128 0x1
+ 640 0235 30       		.byte	0x30
+ 641 0236 00       		.byte	0
+ 642 0237 0F       		.uleb128 0xf
+ 643 0238 CC000000 		.4byte	.LVL40
+ 644 023c 8E030000 		.4byte	0x38e
+ 645 0240 50020000 		.4byte	0x250
+ 646 0244 10       		.uleb128 0x10
+ 647 0245 01       		.uleb128 0x1
+ 648 0246 51       		.byte	0x51
+ 649 0247 02       		.uleb128 0x2
+ 650 0248 08       		.byte	0x8
+ 651 0249 5F       		.byte	0x5f
+ 652 024a 10       		.uleb128 0x10
+ 653 024b 01       		.uleb128 0x1
+ 654 024c 50       		.byte	0x50
+ 655 024d 01       		.uleb128 0x1
+ 656 024e 4E       		.byte	0x4e
+ 657 024f 00       		.byte	0
+ 658 0250 0F       		.uleb128 0xf
+ 659 0251 D2000000 		.4byte	.LVL41
+ 660 0255 A4030000 		.4byte	0x3a4
+ 661 0259 63020000 		.4byte	0x263
+ 662 025d 10       		.uleb128 0x10
+ 663 025e 01       		.uleb128 0x1
+ 664 025f 50       		.byte	0x50
+ 665 0260 01       		.uleb128 0x1
+ 666 0261 31       		.byte	0x31
+ 667 0262 00       		.byte	0
+ 668 0263 0E       		.uleb128 0xe
+ 669 0264 D6000000 		.4byte	.LVL42
+ 670 0268 B5030000 		.4byte	0x3b5
+ 671 026c 0F       		.uleb128 0xf
+ 672 026d DE000000 		.4byte	.LVL43
+ 673 0271 C0030000 		.4byte	0x3c0
+ 674 0275 81020000 		.4byte	0x281
+ 675 0279 10       		.uleb128 0x10
+ 676 027a 01       		.uleb128 0x1
+ 677 027b 50       		.byte	0x50
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 15
+
+
+ 678 027c 03       		.uleb128 0x3
+ 679 027d 0A       		.byte	0xa
+ 680 027e 9001     		.2byte	0x190
+ 681 0280 00       		.byte	0
+ 682 0281 0F       		.uleb128 0xf
+ 683 0282 E4000000 		.4byte	.LVL44
+ 684 0286 A4030000 		.4byte	0x3a4
+ 685 028a 94020000 		.4byte	0x294
+ 686 028e 10       		.uleb128 0x10
+ 687 028f 01       		.uleb128 0x1
+ 688 0290 50       		.byte	0x50
+ 689 0291 01       		.uleb128 0x1
+ 690 0292 30       		.byte	0x30
+ 691 0293 00       		.byte	0
+ 692 0294 0E       		.uleb128 0xe
+ 693 0295 0A010000 		.4byte	.LVL51
+ 694 0299 D1030000 		.4byte	0x3d1
+ 695 029d 0F       		.uleb128 0xf
+ 696 029e 12010000 		.4byte	.LVL52
+ 697 02a2 8E030000 		.4byte	0x38e
+ 698 02a6 B6020000 		.4byte	0x2b6
+ 699 02aa 10       		.uleb128 0x10
+ 700 02ab 01       		.uleb128 0x1
+ 701 02ac 51       		.byte	0x51
+ 702 02ad 02       		.uleb128 0x2
+ 703 02ae 08       		.byte	0x8
+ 704 02af 6E       		.byte	0x6e
+ 705 02b0 10       		.uleb128 0x10
+ 706 02b1 01       		.uleb128 0x1
+ 707 02b2 50       		.byte	0x50
+ 708 02b3 01       		.uleb128 0x1
+ 709 02b4 44       		.byte	0x44
+ 710 02b5 00       		.byte	0
+ 711 02b6 0F       		.uleb128 0xf
+ 712 02b7 18010000 		.4byte	.LVL53
+ 713 02bb A4030000 		.4byte	0x3a4
+ 714 02bf C9020000 		.4byte	0x2c9
+ 715 02c3 10       		.uleb128 0x10
+ 716 02c4 01       		.uleb128 0x1
+ 717 02c5 50       		.byte	0x50
+ 718 02c6 01       		.uleb128 0x1
+ 719 02c7 31       		.byte	0x31
+ 720 02c8 00       		.byte	0
+ 721 02c9 0E       		.uleb128 0xe
+ 722 02ca 1C010000 		.4byte	.LVL54
+ 723 02ce B5030000 		.4byte	0x3b5
+ 724 02d2 0F       		.uleb128 0xf
+ 725 02d3 22010000 		.4byte	.LVL55
+ 726 02d7 C0030000 		.4byte	0x3c0
+ 727 02db E6020000 		.4byte	0x2e6
+ 728 02df 10       		.uleb128 0x10
+ 729 02e0 01       		.uleb128 0x1
+ 730 02e1 50       		.byte	0x50
+ 731 02e2 02       		.uleb128 0x2
+ 732 02e3 08       		.byte	0x8
+ 733 02e4 C8       		.byte	0xc8
+ 734 02e5 00       		.byte	0
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 16
+
+
+ 735 02e6 0F       		.uleb128 0xf
+ 736 02e7 28010000 		.4byte	.LVL56
+ 737 02eb A4030000 		.4byte	0x3a4
+ 738 02ef F9020000 		.4byte	0x2f9
+ 739 02f3 10       		.uleb128 0x10
+ 740 02f4 01       		.uleb128 0x1
+ 741 02f5 50       		.byte	0x50
+ 742 02f6 01       		.uleb128 0x1
+ 743 02f7 30       		.byte	0x30
+ 744 02f8 00       		.byte	0
+ 745 02f9 0F       		.uleb128 0xf
+ 746 02fa 32010000 		.4byte	.LVL57
+ 747 02fe DE030000 		.4byte	0x3de
+ 748 0302 10030000 		.4byte	0x310
+ 749 0306 10       		.uleb128 0x10
+ 750 0307 01       		.uleb128 0x1
+ 751 0308 50       		.byte	0x50
+ 752 0309 05       		.uleb128 0x5
+ 753 030a 03       		.byte	0x3
+ 754 030b 00000000 		.4byte	.LC0
+ 755 030f 00       		.byte	0
+ 756 0310 0F       		.uleb128 0xf
+ 757 0311 38010000 		.4byte	.LVL58
+ 758 0315 F4030000 		.4byte	0x3f4
+ 759 0319 27030000 		.4byte	0x327
+ 760 031d 10       		.uleb128 0x10
+ 761 031e 01       		.uleb128 0x1
+ 762 031f 50       		.byte	0x50
+ 763 0320 05       		.uleb128 0x5
+ 764 0321 03       		.byte	0x3
+ 765 0322 08000000 		.4byte	.LC1
+ 766 0326 00       		.byte	0
+ 767 0327 0F       		.uleb128 0xf
+ 768 0328 4C010000 		.4byte	.LVL60
+ 769 032c DE030000 		.4byte	0x3de
+ 770 0330 44030000 		.4byte	0x344
+ 771 0334 10       		.uleb128 0x10
+ 772 0335 01       		.uleb128 0x1
+ 773 0336 51       		.byte	0x51
+ 774 0337 02       		.uleb128 0x2
+ 775 0338 77       		.byte	0x77
+ 776 0339 00       		.sleb128 0
+ 777 033a 10       		.uleb128 0x10
+ 778 033b 01       		.uleb128 0x1
+ 779 033c 50       		.byte	0x50
+ 780 033d 05       		.uleb128 0x5
+ 781 033e 03       		.byte	0x3
+ 782 033f 34000000 		.4byte	.LC2
+ 783 0343 00       		.byte	0
+ 784 0344 11       		.uleb128 0x11
+ 785 0345 54010000 		.4byte	.LVL61
+ 786 0349 C0030000 		.4byte	0x3c0
+ 787 034d 10       		.uleb128 0x10
+ 788 034e 01       		.uleb128 0x1
+ 789 034f 50       		.byte	0x50
+ 790 0350 03       		.uleb128 0x3
+ 791 0351 0A       		.byte	0xa
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 17
+
+
+ 792 0352 F401     		.2byte	0x1f4
+ 793 0354 00       		.byte	0
+ 794 0355 00       		.byte	0
+ 795 0356 12       		.uleb128 0x12
+ 796 0357 91000000 		.4byte	.LASF33
+ 797 035b 0A       		.byte	0xa
+ 798 035c 9606     		.2byte	0x696
+ 799 035e 62030000 		.4byte	0x362
+ 800 0362 13       		.uleb128 0x13
+ 801 0363 76000000 		.4byte	0x76
+ 802 0367 14       		.uleb128 0x14
+ 803 0368 5F020000 		.4byte	.LASF34
+ 804 036c 05       		.byte	0x5
+ 805 036d D1       		.byte	0xd1
+ 806 036e 15       		.uleb128 0x15
+ 807 036f E2010000 		.4byte	.LASF25
+ 808 0373 05       		.byte	0x5
+ 809 0374 39       		.byte	0x39
+ 810 0375 81000000 		.4byte	0x81
+ 811 0379 83030000 		.4byte	0x383
+ 812 037d 16       		.uleb128 0x16
+ 813 037e 81000000 		.4byte	0x81
+ 814 0382 00       		.byte	0
+ 815 0383 17       		.uleb128 0x17
+ 816 0384 62010000 		.4byte	.LASF22
+ 817 0388 05       		.byte	0x5
+ 818 0389 3B       		.byte	0x3b
+ 819 038a 99000000 		.4byte	0x99
+ 820 038e 18       		.uleb128 0x18
+ 821 038f 91010000 		.4byte	.LASF20
+ 822 0393 01       		.byte	0x1
+ 823 0394 15       		.byte	0x15
+ 824 0395 A4030000 		.4byte	0x3a4
+ 825 0399 16       		.uleb128 0x16
+ 826 039a 8D000000 		.4byte	0x8d
+ 827 039e 16       		.uleb128 0x16
+ 828 039f 81000000 		.4byte	0x81
+ 829 03a3 00       		.byte	0
+ 830 03a4 18       		.uleb128 0x18
+ 831 03a5 BB010000 		.4byte	.LASF21
+ 832 03a9 01       		.byte	0x1
+ 833 03aa 16       		.byte	0x16
+ 834 03ab B5030000 		.4byte	0x3b5
+ 835 03af 16       		.uleb128 0x16
+ 836 03b0 81000000 		.4byte	0x81
+ 837 03b4 00       		.byte	0
+ 838 03b5 17       		.uleb128 0x17
+ 839 03b6 9E000000 		.4byte	.LASF23
+ 840 03ba 06       		.byte	0x6
+ 841 03bb 29       		.byte	0x29
+ 842 03bc 81000000 		.4byte	0x81
+ 843 03c0 18       		.uleb128 0x18
+ 844 03c1 78020000 		.4byte	.LASF24
+ 845 03c5 07       		.byte	0x7
+ 846 03c6 76       		.byte	0x76
+ 847 03c7 D1030000 		.4byte	0x3d1
+ 848 03cb 16       		.uleb128 0x16
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 18
+
+
+ 849 03cc 8D000000 		.4byte	0x8d
+ 850 03d0 00       		.byte	0
+ 851 03d1 19       		.uleb128 0x19
+ 852 03d2 B5000000 		.4byte	.LASF35
+ 853 03d6 01       		.byte	0x1
+ 854 03d7 18       		.byte	0x18
+ 855 03d8 DE030000 		.4byte	0x3de
+ 856 03dc 1A       		.uleb128 0x1a
+ 857 03dd 00       		.byte	0
+ 858 03de 15       		.uleb128 0x15
+ 859 03df DB010000 		.4byte	.LASF26
+ 860 03e3 08       		.byte	0x8
+ 861 03e4 B2       		.byte	0xb2
+ 862 03e5 68000000 		.4byte	0x68
+ 863 03e9 F4030000 		.4byte	0x3f4
+ 864 03ed 16       		.uleb128 0x16
+ 865 03ee C1000000 		.4byte	0xc1
+ 866 03f2 1A       		.uleb128 0x1a
+ 867 03f3 00       		.byte	0
+ 868 03f4 1B       		.uleb128 0x1b
+ 869 03f5 24000000 		.4byte	.LASF27
+ 870 03f9 09       		.byte	0x9
+ 871 03fa 00       		.byte	0
+ 872 03fb 4E020000 		.4byte	.LASF36
+ 873 03ff 68000000 		.4byte	0x68
+ 874 0403 16       		.uleb128 0x16
+ 875 0404 C1000000 		.4byte	0xc1
+ 876 0408 00       		.byte	0
+ 877 0409 00       		.byte	0
+ 878              		.section	.debug_abbrev,"",%progbits
+ 879              	.Ldebug_abbrev0:
+ 880 0000 01       		.uleb128 0x1
+ 881 0001 11       		.uleb128 0x11
+ 882 0002 01       		.byte	0x1
+ 883 0003 25       		.uleb128 0x25
+ 884 0004 0E       		.uleb128 0xe
+ 885 0005 13       		.uleb128 0x13
+ 886 0006 0B       		.uleb128 0xb
+ 887 0007 03       		.uleb128 0x3
+ 888 0008 0E       		.uleb128 0xe
+ 889 0009 1B       		.uleb128 0x1b
+ 890 000a 0E       		.uleb128 0xe
+ 891 000b 55       		.uleb128 0x55
+ 892 000c 17       		.uleb128 0x17
+ 893 000d 11       		.uleb128 0x11
+ 894 000e 01       		.uleb128 0x1
+ 895 000f 10       		.uleb128 0x10
+ 896 0010 17       		.uleb128 0x17
+ 897 0011 00       		.byte	0
+ 898 0012 00       		.byte	0
+ 899 0013 02       		.uleb128 0x2
+ 900 0014 24       		.uleb128 0x24
+ 901 0015 00       		.byte	0
+ 902 0016 0B       		.uleb128 0xb
+ 903 0017 0B       		.uleb128 0xb
+ 904 0018 3E       		.uleb128 0x3e
+ 905 0019 0B       		.uleb128 0xb
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 19
+
+
+ 906 001a 03       		.uleb128 0x3
+ 907 001b 0E       		.uleb128 0xe
+ 908 001c 00       		.byte	0
+ 909 001d 00       		.byte	0
+ 910 001e 03       		.uleb128 0x3
+ 911 001f 16       		.uleb128 0x16
+ 912 0020 00       		.byte	0
+ 913 0021 03       		.uleb128 0x3
+ 914 0022 0E       		.uleb128 0xe
+ 915 0023 3A       		.uleb128 0x3a
+ 916 0024 0B       		.uleb128 0xb
+ 917 0025 3B       		.uleb128 0x3b
+ 918 0026 0B       		.uleb128 0xb
+ 919 0027 49       		.uleb128 0x49
+ 920 0028 13       		.uleb128 0x13
+ 921 0029 00       		.byte	0
+ 922 002a 00       		.byte	0
+ 923 002b 04       		.uleb128 0x4
+ 924 002c 24       		.uleb128 0x24
+ 925 002d 00       		.byte	0
+ 926 002e 0B       		.uleb128 0xb
+ 927 002f 0B       		.uleb128 0xb
+ 928 0030 3E       		.uleb128 0x3e
+ 929 0031 0B       		.uleb128 0xb
+ 930 0032 03       		.uleb128 0x3
+ 931 0033 08       		.uleb128 0x8
+ 932 0034 00       		.byte	0
+ 933 0035 00       		.byte	0
+ 934 0036 05       		.uleb128 0x5
+ 935 0037 16       		.uleb128 0x16
+ 936 0038 00       		.byte	0
+ 937 0039 03       		.uleb128 0x3
+ 938 003a 0E       		.uleb128 0xe
+ 939 003b 3A       		.uleb128 0x3a
+ 940 003c 0B       		.uleb128 0xb
+ 941 003d 3B       		.uleb128 0x3b
+ 942 003e 05       		.uleb128 0x5
+ 943 003f 49       		.uleb128 0x49
+ 944 0040 13       		.uleb128 0x13
+ 945 0041 00       		.byte	0
+ 946 0042 00       		.byte	0
+ 947 0043 06       		.uleb128 0x6
+ 948 0044 0F       		.uleb128 0xf
+ 949 0045 00       		.byte	0
+ 950 0046 0B       		.uleb128 0xb
+ 951 0047 0B       		.uleb128 0xb
+ 952 0048 49       		.uleb128 0x49
+ 953 0049 13       		.uleb128 0x13
+ 954 004a 00       		.byte	0
+ 955 004b 00       		.byte	0
+ 956 004c 07       		.uleb128 0x7
+ 957 004d 26       		.uleb128 0x26
+ 958 004e 00       		.byte	0
+ 959 004f 49       		.uleb128 0x49
+ 960 0050 13       		.uleb128 0x13
+ 961 0051 00       		.byte	0
+ 962 0052 00       		.byte	0
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 20
+
+
+ 963 0053 08       		.uleb128 0x8
+ 964 0054 2E       		.uleb128 0x2e
+ 965 0055 01       		.byte	0x1
+ 966 0056 3F       		.uleb128 0x3f
+ 967 0057 19       		.uleb128 0x19
+ 968 0058 03       		.uleb128 0x3
+ 969 0059 0E       		.uleb128 0xe
+ 970 005a 3A       		.uleb128 0x3a
+ 971 005b 0B       		.uleb128 0xb
+ 972 005c 3B       		.uleb128 0x3b
+ 973 005d 0B       		.uleb128 0xb
+ 974 005e 27       		.uleb128 0x27
+ 975 005f 19       		.uleb128 0x19
+ 976 0060 49       		.uleb128 0x49
+ 977 0061 13       		.uleb128 0x13
+ 978 0062 11       		.uleb128 0x11
+ 979 0063 01       		.uleb128 0x1
+ 980 0064 12       		.uleb128 0x12
+ 981 0065 06       		.uleb128 0x6
+ 982 0066 40       		.uleb128 0x40
+ 983 0067 18       		.uleb128 0x18
+ 984 0068 9642     		.uleb128 0x2116
+ 985 006a 19       		.uleb128 0x19
+ 986 006b 01       		.uleb128 0x1
+ 987 006c 13       		.uleb128 0x13
+ 988 006d 00       		.byte	0
+ 989 006e 00       		.byte	0
+ 990 006f 09       		.uleb128 0x9
+ 991 0070 05       		.uleb128 0x5
+ 992 0071 00       		.byte	0
+ 993 0072 03       		.uleb128 0x3
+ 994 0073 0E       		.uleb128 0xe
+ 995 0074 3A       		.uleb128 0x3a
+ 996 0075 0B       		.uleb128 0xb
+ 997 0076 3B       		.uleb128 0x3b
+ 998 0077 0B       		.uleb128 0xb
+ 999 0078 49       		.uleb128 0x49
+ 1000 0079 13       		.uleb128 0x13
+ 1001 007a 02       		.uleb128 0x2
+ 1002 007b 17       		.uleb128 0x17
+ 1003 007c 00       		.byte	0
+ 1004 007d 00       		.byte	0
+ 1005 007e 0A       		.uleb128 0xa
+ 1006 007f 34       		.uleb128 0x34
+ 1007 0080 00       		.byte	0
+ 1008 0081 03       		.uleb128 0x3
+ 1009 0082 0E       		.uleb128 0xe
+ 1010 0083 3A       		.uleb128 0x3a
+ 1011 0084 0B       		.uleb128 0xb
+ 1012 0085 3B       		.uleb128 0x3b
+ 1013 0086 0B       		.uleb128 0xb
+ 1014 0087 49       		.uleb128 0x49
+ 1015 0088 13       		.uleb128 0x13
+ 1016 0089 02       		.uleb128 0x2
+ 1017 008a 18       		.uleb128 0x18
+ 1018 008b 00       		.byte	0
+ 1019 008c 00       		.byte	0
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 21
+
+
+ 1020 008d 0B       		.uleb128 0xb
+ 1021 008e 2E       		.uleb128 0x2e
+ 1022 008f 01       		.byte	0x1
+ 1023 0090 3F       		.uleb128 0x3f
+ 1024 0091 19       		.uleb128 0x19
+ 1025 0092 03       		.uleb128 0x3
+ 1026 0093 0E       		.uleb128 0xe
+ 1027 0094 3A       		.uleb128 0x3a
+ 1028 0095 0B       		.uleb128 0xb
+ 1029 0096 3B       		.uleb128 0x3b
+ 1030 0097 0B       		.uleb128 0xb
+ 1031 0098 11       		.uleb128 0x11
+ 1032 0099 01       		.uleb128 0x1
+ 1033 009a 12       		.uleb128 0x12
+ 1034 009b 06       		.uleb128 0x6
+ 1035 009c 40       		.uleb128 0x40
+ 1036 009d 18       		.uleb128 0x18
+ 1037 009e 9642     		.uleb128 0x2116
+ 1038 00a0 19       		.uleb128 0x19
+ 1039 00a1 01       		.uleb128 0x1
+ 1040 00a2 13       		.uleb128 0x13
+ 1041 00a3 00       		.byte	0
+ 1042 00a4 00       		.byte	0
+ 1043 00a5 0C       		.uleb128 0xc
+ 1044 00a6 34       		.uleb128 0x34
+ 1045 00a7 00       		.byte	0
+ 1046 00a8 03       		.uleb128 0x3
+ 1047 00a9 0E       		.uleb128 0xe
+ 1048 00aa 3A       		.uleb128 0x3a
+ 1049 00ab 0B       		.uleb128 0xb
+ 1050 00ac 3B       		.uleb128 0x3b
+ 1051 00ad 0B       		.uleb128 0xb
+ 1052 00ae 49       		.uleb128 0x49
+ 1053 00af 13       		.uleb128 0x13
+ 1054 00b0 02       		.uleb128 0x2
+ 1055 00b1 17       		.uleb128 0x17
+ 1056 00b2 00       		.byte	0
+ 1057 00b3 00       		.byte	0
+ 1058 00b4 0D       		.uleb128 0xd
+ 1059 00b5 34       		.uleb128 0x34
+ 1060 00b6 00       		.byte	0
+ 1061 00b7 03       		.uleb128 0x3
+ 1062 00b8 08       		.uleb128 0x8
+ 1063 00b9 3A       		.uleb128 0x3a
+ 1064 00ba 0B       		.uleb128 0xb
+ 1065 00bb 3B       		.uleb128 0x3b
+ 1066 00bc 0B       		.uleb128 0xb
+ 1067 00bd 49       		.uleb128 0x49
+ 1068 00be 13       		.uleb128 0x13
+ 1069 00bf 02       		.uleb128 0x2
+ 1070 00c0 17       		.uleb128 0x17
+ 1071 00c1 00       		.byte	0
+ 1072 00c2 00       		.byte	0
+ 1073 00c3 0E       		.uleb128 0xe
+ 1074 00c4 898201   		.uleb128 0x4109
+ 1075 00c7 00       		.byte	0
+ 1076 00c8 11       		.uleb128 0x11
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 22
+
+
+ 1077 00c9 01       		.uleb128 0x1
+ 1078 00ca 31       		.uleb128 0x31
+ 1079 00cb 13       		.uleb128 0x13
+ 1080 00cc 00       		.byte	0
+ 1081 00cd 00       		.byte	0
+ 1082 00ce 0F       		.uleb128 0xf
+ 1083 00cf 898201   		.uleb128 0x4109
+ 1084 00d2 01       		.byte	0x1
+ 1085 00d3 11       		.uleb128 0x11
+ 1086 00d4 01       		.uleb128 0x1
+ 1087 00d5 31       		.uleb128 0x31
+ 1088 00d6 13       		.uleb128 0x13
+ 1089 00d7 01       		.uleb128 0x1
+ 1090 00d8 13       		.uleb128 0x13
+ 1091 00d9 00       		.byte	0
+ 1092 00da 00       		.byte	0
+ 1093 00db 10       		.uleb128 0x10
+ 1094 00dc 8A8201   		.uleb128 0x410a
+ 1095 00df 00       		.byte	0
+ 1096 00e0 02       		.uleb128 0x2
+ 1097 00e1 18       		.uleb128 0x18
+ 1098 00e2 9142     		.uleb128 0x2111
+ 1099 00e4 18       		.uleb128 0x18
+ 1100 00e5 00       		.byte	0
+ 1101 00e6 00       		.byte	0
+ 1102 00e7 11       		.uleb128 0x11
+ 1103 00e8 898201   		.uleb128 0x4109
+ 1104 00eb 01       		.byte	0x1
+ 1105 00ec 11       		.uleb128 0x11
+ 1106 00ed 01       		.uleb128 0x1
+ 1107 00ee 31       		.uleb128 0x31
+ 1108 00ef 13       		.uleb128 0x13
+ 1109 00f0 00       		.byte	0
+ 1110 00f1 00       		.byte	0
+ 1111 00f2 12       		.uleb128 0x12
+ 1112 00f3 34       		.uleb128 0x34
+ 1113 00f4 00       		.byte	0
+ 1114 00f5 03       		.uleb128 0x3
+ 1115 00f6 0E       		.uleb128 0xe
+ 1116 00f7 3A       		.uleb128 0x3a
+ 1117 00f8 0B       		.uleb128 0xb
+ 1118 00f9 3B       		.uleb128 0x3b
+ 1119 00fa 05       		.uleb128 0x5
+ 1120 00fb 49       		.uleb128 0x49
+ 1121 00fc 13       		.uleb128 0x13
+ 1122 00fd 3F       		.uleb128 0x3f
+ 1123 00fe 19       		.uleb128 0x19
+ 1124 00ff 3C       		.uleb128 0x3c
+ 1125 0100 19       		.uleb128 0x19
+ 1126 0101 00       		.byte	0
+ 1127 0102 00       		.byte	0
+ 1128 0103 13       		.uleb128 0x13
+ 1129 0104 35       		.uleb128 0x35
+ 1130 0105 00       		.byte	0
+ 1131 0106 49       		.uleb128 0x49
+ 1132 0107 13       		.uleb128 0x13
+ 1133 0108 00       		.byte	0
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 23
+
+
+ 1134 0109 00       		.byte	0
+ 1135 010a 14       		.uleb128 0x14
+ 1136 010b 2E       		.uleb128 0x2e
+ 1137 010c 00       		.byte	0
+ 1138 010d 3F       		.uleb128 0x3f
+ 1139 010e 19       		.uleb128 0x19
+ 1140 010f 03       		.uleb128 0x3
+ 1141 0110 0E       		.uleb128 0xe
+ 1142 0111 3A       		.uleb128 0x3a
+ 1143 0112 0B       		.uleb128 0xb
+ 1144 0113 3B       		.uleb128 0x3b
+ 1145 0114 0B       		.uleb128 0xb
+ 1146 0115 27       		.uleb128 0x27
+ 1147 0116 19       		.uleb128 0x19
+ 1148 0117 3C       		.uleb128 0x3c
+ 1149 0118 19       		.uleb128 0x19
+ 1150 0119 00       		.byte	0
+ 1151 011a 00       		.byte	0
+ 1152 011b 15       		.uleb128 0x15
+ 1153 011c 2E       		.uleb128 0x2e
+ 1154 011d 01       		.byte	0x1
+ 1155 011e 3F       		.uleb128 0x3f
+ 1156 011f 19       		.uleb128 0x19
+ 1157 0120 03       		.uleb128 0x3
+ 1158 0121 0E       		.uleb128 0xe
+ 1159 0122 3A       		.uleb128 0x3a
+ 1160 0123 0B       		.uleb128 0xb
+ 1161 0124 3B       		.uleb128 0x3b
+ 1162 0125 0B       		.uleb128 0xb
+ 1163 0126 27       		.uleb128 0x27
+ 1164 0127 19       		.uleb128 0x19
+ 1165 0128 49       		.uleb128 0x49
+ 1166 0129 13       		.uleb128 0x13
+ 1167 012a 3C       		.uleb128 0x3c
+ 1168 012b 19       		.uleb128 0x19
+ 1169 012c 01       		.uleb128 0x1
+ 1170 012d 13       		.uleb128 0x13
+ 1171 012e 00       		.byte	0
+ 1172 012f 00       		.byte	0
+ 1173 0130 16       		.uleb128 0x16
+ 1174 0131 05       		.uleb128 0x5
+ 1175 0132 00       		.byte	0
+ 1176 0133 49       		.uleb128 0x49
+ 1177 0134 13       		.uleb128 0x13
+ 1178 0135 00       		.byte	0
+ 1179 0136 00       		.byte	0
+ 1180 0137 17       		.uleb128 0x17
+ 1181 0138 2E       		.uleb128 0x2e
+ 1182 0139 00       		.byte	0
+ 1183 013a 3F       		.uleb128 0x3f
+ 1184 013b 19       		.uleb128 0x19
+ 1185 013c 03       		.uleb128 0x3
+ 1186 013d 0E       		.uleb128 0xe
+ 1187 013e 3A       		.uleb128 0x3a
+ 1188 013f 0B       		.uleb128 0xb
+ 1189 0140 3B       		.uleb128 0x3b
+ 1190 0141 0B       		.uleb128 0xb
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 24
+
+
+ 1191 0142 27       		.uleb128 0x27
+ 1192 0143 19       		.uleb128 0x19
+ 1193 0144 49       		.uleb128 0x49
+ 1194 0145 13       		.uleb128 0x13
+ 1195 0146 3C       		.uleb128 0x3c
+ 1196 0147 19       		.uleb128 0x19
+ 1197 0148 00       		.byte	0
+ 1198 0149 00       		.byte	0
+ 1199 014a 18       		.uleb128 0x18
+ 1200 014b 2E       		.uleb128 0x2e
+ 1201 014c 01       		.byte	0x1
+ 1202 014d 3F       		.uleb128 0x3f
+ 1203 014e 19       		.uleb128 0x19
+ 1204 014f 03       		.uleb128 0x3
+ 1205 0150 0E       		.uleb128 0xe
+ 1206 0151 3A       		.uleb128 0x3a
+ 1207 0152 0B       		.uleb128 0xb
+ 1208 0153 3B       		.uleb128 0x3b
+ 1209 0154 0B       		.uleb128 0xb
+ 1210 0155 27       		.uleb128 0x27
+ 1211 0156 19       		.uleb128 0x19
+ 1212 0157 3C       		.uleb128 0x3c
+ 1213 0158 19       		.uleb128 0x19
+ 1214 0159 01       		.uleb128 0x1
+ 1215 015a 13       		.uleb128 0x13
+ 1216 015b 00       		.byte	0
+ 1217 015c 00       		.byte	0
+ 1218 015d 19       		.uleb128 0x19
+ 1219 015e 2E       		.uleb128 0x2e
+ 1220 015f 01       		.byte	0x1
+ 1221 0160 3F       		.uleb128 0x3f
+ 1222 0161 19       		.uleb128 0x19
+ 1223 0162 03       		.uleb128 0x3
+ 1224 0163 0E       		.uleb128 0xe
+ 1225 0164 3A       		.uleb128 0x3a
+ 1226 0165 0B       		.uleb128 0xb
+ 1227 0166 3B       		.uleb128 0x3b
+ 1228 0167 0B       		.uleb128 0xb
+ 1229 0168 3C       		.uleb128 0x3c
+ 1230 0169 19       		.uleb128 0x19
+ 1231 016a 01       		.uleb128 0x1
+ 1232 016b 13       		.uleb128 0x13
+ 1233 016c 00       		.byte	0
+ 1234 016d 00       		.byte	0
+ 1235 016e 1A       		.uleb128 0x1a
+ 1236 016f 18       		.uleb128 0x18
+ 1237 0170 00       		.byte	0
+ 1238 0171 00       		.byte	0
+ 1239 0172 00       		.byte	0
+ 1240 0173 1B       		.uleb128 0x1b
+ 1241 0174 2E       		.uleb128 0x2e
+ 1242 0175 01       		.byte	0x1
+ 1243 0176 3F       		.uleb128 0x3f
+ 1244 0177 19       		.uleb128 0x19
+ 1245 0178 03       		.uleb128 0x3
+ 1246 0179 0E       		.uleb128 0xe
+ 1247 017a 3A       		.uleb128 0x3a
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 25
+
+
+ 1248 017b 0B       		.uleb128 0xb
+ 1249 017c 3B       		.uleb128 0x3b
+ 1250 017d 0B       		.uleb128 0xb
+ 1251 017e 6E       		.uleb128 0x6e
+ 1252 017f 0E       		.uleb128 0xe
+ 1253 0180 27       		.uleb128 0x27
+ 1254 0181 19       		.uleb128 0x19
+ 1255 0182 49       		.uleb128 0x49
+ 1256 0183 13       		.uleb128 0x13
+ 1257 0184 3C       		.uleb128 0x3c
+ 1258 0185 19       		.uleb128 0x19
+ 1259 0186 00       		.byte	0
+ 1260 0187 00       		.byte	0
+ 1261 0188 00       		.byte	0
+ 1262              		.section	.debug_loc,"",%progbits
+ 1263              	.Ldebug_loc0:
+ 1264              	.LLST0:
+ 1265 0000 00000000 		.4byte	.LVL0
+ 1266 0004 05000000 		.4byte	.LVL1-1
+ 1267 0008 0100     		.2byte	0x1
+ 1268 000a 50       		.byte	0x50
+ 1269 000b 05000000 		.4byte	.LVL1-1
+ 1270 000f 2C000000 		.4byte	.LFE63
+ 1271 0013 0400     		.2byte	0x4
+ 1272 0015 F3       		.byte	0xf3
+ 1273 0016 01       		.uleb128 0x1
+ 1274 0017 50       		.byte	0x50
+ 1275 0018 9F       		.byte	0x9f
+ 1276 0019 00000000 		.4byte	0
+ 1277 001d 00000000 		.4byte	0
+ 1278              	.LLST1:
+ 1279 0021 02000000 		.4byte	.LVL5
+ 1280 0025 18000000 		.4byte	.LVL9
+ 1281 0029 0200     		.2byte	0x2
+ 1282 002b 30       		.byte	0x30
+ 1283 002c 9F       		.byte	0x9f
+ 1284 002d 18000000 		.4byte	.LVL9
+ 1285 0031 54010000 		.4byte	.LVL61
+ 1286 0035 0100     		.2byte	0x1
+ 1287 0037 57       		.byte	0x57
+ 1288 0038 00000000 		.4byte	0
+ 1289 003c 00000000 		.4byte	0
+ 1290              	.LLST2:
+ 1291 0040 02000000 		.4byte	.LVL5
+ 1292 0044 1E000000 		.4byte	.LVL11
+ 1293 0048 0600     		.2byte	0x6
+ 1294 004a 9E       		.byte	0x9e
+ 1295 004b 04       		.uleb128 0x4
+ 1296 004c 00000000 		.4byte	0
+ 1297 0050 1E000000 		.4byte	.LVL11
+ 1298 0054 25000000 		.4byte	.LVL12-1
+ 1299 0058 0100     		.2byte	0x1
+ 1300 005a 50       		.byte	0x50
+ 1301 005b 25000000 		.4byte	.LVL12-1
+ 1302 005f 54010000 		.4byte	.LVL61
+ 1303 0063 0100     		.2byte	0x1
+ 1304 0065 56       		.byte	0x56
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 26
+
+
+ 1305 0066 00000000 		.4byte	0
+ 1306 006a 00000000 		.4byte	0
+ 1307              	.LLST3:
+ 1308 006e 38000000 		.4byte	.LVL14
+ 1309 0072 5C000000 		.4byte	.LVL21
+ 1310 0076 0100     		.2byte	0x1
+ 1311 0078 54       		.byte	0x54
+ 1312 0079 5E000000 		.4byte	.LVL22
+ 1313 007d 64000000 		.4byte	.LVL23
+ 1314 0081 0100     		.2byte	0x1
+ 1315 0083 54       		.byte	0x54
+ 1316 0084 7A000000 		.4byte	.LVL26
+ 1317 0088 9E000000 		.4byte	.LVL33
+ 1318 008c 0100     		.2byte	0x1
+ 1319 008e 54       		.byte	0x54
+ 1320 008f A0000000 		.4byte	.LVL34
+ 1321 0093 A6000000 		.4byte	.LVL35
+ 1322 0097 0100     		.2byte	0x1
+ 1323 0099 54       		.byte	0x54
+ 1324 009a C4000000 		.4byte	.LVL39
+ 1325 009e E8000000 		.4byte	.LVL46
+ 1326 00a2 0100     		.2byte	0x1
+ 1327 00a4 54       		.byte	0x54
+ 1328 00a5 EA000000 		.4byte	.LVL47
+ 1329 00a9 F0000000 		.4byte	.LVL48
+ 1330 00ad 0100     		.2byte	0x1
+ 1331 00af 54       		.byte	0x54
+ 1332 00b0 00000000 		.4byte	0
+ 1333 00b4 00000000 		.4byte	0
+ 1334              		.section	.debug_aranges,"",%progbits
+ 1335 0000 24000000 		.4byte	0x24
+ 1336 0004 0200     		.2byte	0x2
+ 1337 0006 00000000 		.4byte	.Ldebug_info0
+ 1338 000a 04       		.byte	0x4
+ 1339 000b 00       		.byte	0
+ 1340 000c 0000     		.2byte	0
+ 1341 000e 0000     		.2byte	0
+ 1342 0010 00000000 		.4byte	.LFB63
+ 1343 0014 2C000000 		.4byte	.LFE63-.LFB63
+ 1344 0018 00000000 		.4byte	.LFB64
+ 1345 001c 74010000 		.4byte	.LFE64-.LFB64
+ 1346 0020 00000000 		.4byte	0
+ 1347 0024 00000000 		.4byte	0
+ 1348              		.section	.debug_ranges,"",%progbits
+ 1349              	.Ldebug_ranges0:
+ 1350 0000 00000000 		.4byte	.LFB63
+ 1351 0004 2C000000 		.4byte	.LFE63
+ 1352 0008 00000000 		.4byte	.LFB64
+ 1353 000c 74010000 		.4byte	.LFE64
+ 1354 0010 00000000 		.4byte	0
+ 1355 0014 00000000 		.4byte	0
+ 1356              		.section	.debug_line,"",%progbits
+ 1357              	.Ldebug_line0:
+ 1358 0000 77020000 		.section	.debug_str,"MS",%progbits,1
+ 1358      02009A01 
+ 1358      00000201 
+ 1358      FB0E0D00 
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 27
+
+
+ 1358      01010101 
+ 1359              	.LASF9:
+ 1360 0000 5F5F696E 		.ascii	"__int32_t\000"
+ 1360      7433325F 
+ 1360      7400
+ 1361              	.LASF31:
+ 1362 000a 4144435F 		.ascii	"ADC_result_to_volts\000"
+ 1362      72657375 
+ 1362      6C745F74 
+ 1362      6F5F766F 
+ 1362      6C747300 
+ 1363              	.LASF14:
+ 1364 001e 666C6F61 		.ascii	"float\000"
+ 1364      7400
+ 1365              	.LASF27:
+ 1366 0024 5F5F6275 		.ascii	"__builtin_puts\000"
+ 1366      696C7469 
+ 1366      6E5F7075 
+ 1366      747300
+ 1367              	.LASF1:
+ 1368 0033 756E7369 		.ascii	"unsigned char\000"
+ 1368      676E6564 
+ 1368      20636861 
+ 1368      7200
+ 1369              	.LASF13:
+ 1370 0041 696E7431 		.ascii	"int16\000"
+ 1370      3600
+ 1371              	.LASF5:
+ 1372 0047 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1372      20756E73 
+ 1372      69676E65 
+ 1372      6420696E 
+ 1372      7400
+ 1373              	.LASF29:
+ 1374 0059 566F6C74 		.ascii	"Voltage_Monitoring.c\000"
+ 1374      6167655F 
+ 1374      4D6F6E69 
+ 1374      746F7269 
+ 1374      6E672E63 
+ 1375              	.LASF3:
+ 1376 006e 73686F72 		.ascii	"short unsigned int\000"
+ 1376      7420756E 
+ 1376      7369676E 
+ 1376      65642069 
+ 1376      6E7400
+ 1377              	.LASF32:
+ 1378 0081 4D656173 		.ascii	"Measure_Voltage\000"
+ 1378      7572655F 
+ 1378      566F6C74 
+ 1378      61676500 
+ 1379              	.LASF33:
+ 1380 0091 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1380      52784275 
+ 1380      66666572 
+ 1380      00
+ 1381              	.LASF23:
+ 1382 009e 42617474 		.ascii	"BatteryLed_Read\000"
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 28
+
+
+ 1382      6572794C 
+ 1382      65645F52 
+ 1382      65616400 
+ 1383              	.LASF15:
+ 1384 00ae 646F7562 		.ascii	"double\000"
+ 1384      6C6500
+ 1385              	.LASF35:
+ 1386 00b5 6D6F746F 		.ascii	"motor_stop\000"
+ 1386      725F7374 
+ 1386      6F7000
+ 1387              	.LASF12:
+ 1388 00c0 75696E74 		.ascii	"uint32\000"
+ 1388      333200
+ 1389              	.LASF28:
+ 1390 00c7 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1390      4320342E 
+ 1390      392E3320 
+ 1390      32303135 
+ 1390      30333033 
+ 1391 00fa 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1391      20726576 
+ 1391      6973696F 
+ 1391      6E203232 
+ 1391      31323230 
+ 1392 012d 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1392      66756E63 
+ 1392      74696F6E 
+ 1392      2D736563 
+ 1392      74696F6E 
+ 1393              	.LASF8:
+ 1394 0155 756E7369 		.ascii	"unsigned int\000"
+ 1394      676E6564 
+ 1394      20696E74 
+ 1394      00
+ 1395              	.LASF22:
+ 1396 0162 4144435F 		.ascii	"ADC_Battery_GetResult16\000"
+ 1396      42617474 
+ 1396      6572795F 
+ 1396      47657452 
+ 1396      6573756C 
+ 1397              	.LASF7:
+ 1398 017a 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1398      206C6F6E 
+ 1398      6720756E 
+ 1398      7369676E 
+ 1398      65642069 
+ 1399              	.LASF20:
+ 1400 0191 42656570 		.ascii	"Beep\000"
+ 1400      00
+ 1401              	.LASF18:
+ 1402 0196 766F6C74 		.ascii	"volts\000"
+ 1402      7300
+ 1403              	.LASF10:
+ 1404 019c 696E7433 		.ascii	"int32_t\000"
+ 1404      325F7400 
+ 1405              	.LASF17:
+ 1406 01a4 73697A65 		.ascii	"sizetype\000"
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 29
+
+
+ 1406      74797065 
+ 1406      00
+ 1407              	.LASF6:
+ 1408 01ad 6C6F6E67 		.ascii	"long long int\000"
+ 1408      206C6F6E 
+ 1408      6720696E 
+ 1408      7400
+ 1409              	.LASF21:
+ 1410 01bb 42617474 		.ascii	"BatteryLed_Write\000"
+ 1410      6572794C 
+ 1410      65645F57 
+ 1410      72697465 
+ 1410      00
+ 1411              	.LASF16:
+ 1412 01cc 63686172 		.ascii	"char\000"
+ 1412      00
+ 1413              	.LASF19:
+ 1414 01d1 61646372 		.ascii	"adcresult\000"
+ 1414      6573756C 
+ 1414      7400
+ 1415              	.LASF26:
+ 1416 01db 7072696E 		.ascii	"printf\000"
+ 1416      746600
+ 1417              	.LASF25:
+ 1418 01e2 4144435F 		.ascii	"ADC_Battery_IsEndConversion\000"
+ 1418      42617474 
+ 1418      6572795F 
+ 1418      4973456E 
+ 1418      64436F6E 
+ 1419              	.LASF2:
+ 1420 01fe 73686F72 		.ascii	"short int\000"
+ 1420      7420696E 
+ 1420      7400
+ 1421              	.LASF11:
+ 1422 0208 75696E74 		.ascii	"uint8\000"
+ 1422      3800
+ 1423              	.LASF30:
+ 1424 020e 433A5C55 		.ascii	"C:\\Users\\Koo Moo\\Desktop\\ZumoRobo sumoV1\\ZumoB"
+ 1424      73657273 
+ 1424      5C4B6F6F 
+ 1424      204D6F6F 
+ 1424      5C446573 
+ 1425 023c 6F742E63 		.ascii	"ot.cydsn\000"
+ 1425      7964736E 
+ 1425      00
+ 1426              	.LASF4:
+ 1427 0245 6C6F6E67 		.ascii	"long int\000"
+ 1427      20696E74 
+ 1427      00
+ 1428              	.LASF36:
+ 1429 024e 70757473 		.ascii	"puts\000"
+ 1429      00
+ 1430              	.LASF0:
+ 1431 0253 7369676E 		.ascii	"signed char\000"
+ 1431      65642063 
+ 1431      68617200 
+ 1432              	.LASF34:
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccLo2Rex.s 			page 30
+
+
+ 1433 025f 4144435F 		.ascii	"ADC_Battery_StartConvert\000"
+ 1433      42617474 
+ 1433      6572795F 
+ 1433      53746172 
+ 1433      74436F6E 
+ 1434              	.LASF24:
+ 1435 0278 43794465 		.ascii	"CyDelay\000"
+ 1435      6C617900 
+ 1436              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

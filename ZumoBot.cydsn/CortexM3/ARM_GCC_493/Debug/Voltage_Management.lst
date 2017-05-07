@@ -1,0 +1,1508 @@
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Voltage_Management.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.global	__aeabi_i2d
+  19              		.global	__aeabi_ddiv
+  20              		.global	__aeabi_dmul
+  21              		.global	__aeabi_d2f
+  22              		.section	.text.ADC_result_to_volts,"ax",%progbits
+  23              		.align	2
+  24              		.global	ADC_result_to_volts
+  25              		.thumb
+  26              		.thumb_func
+  27              		.type	ADC_result_to_volts, %function
+  28              	ADC_result_to_volts:
+  29              	.LFB63:
+  30              		.file 1 "Voltage_Management.c"
+   1:Voltage_Management.c **** 
+   2:Voltage_Management.c **** #include <project.h>
+   3:Voltage_Management.c **** #include <stdio.h>
+   4:Voltage_Management.c **** #include "Motor.h"
+   5:Voltage_Management.c **** #include "Ultra.h"
+   6:Voltage_Management.c **** #include "Nunchuk.h"
+   7:Voltage_Management.c **** #include "Reflectance.h"
+   8:Voltage_Management.c **** #include "I2C_made.h"
+   9:Voltage_Management.c **** #include "Gyro.h"
+  10:Voltage_Management.c **** #include "Accel_magnet.h"
+  11:Voltage_Management.c **** #include "IR.h"
+  12:Voltage_Management.c **** #include "Ambient.h"
+  13:Voltage_Management.c **** #include "Beep.h"
+  14:Voltage_Management.c **** 
+  15:Voltage_Management.c **** float ADC_result_to_volts(int16 adcresult);
+  16:Voltage_Management.c **** void Beep(uint32 length, uint8 pitch);
+  17:Voltage_Management.c **** void Measure_Voltage();
+  18:Voltage_Management.c **** 
+  19:Voltage_Management.c **** // Subroutine for custom unit conversion (used below in Measure_Voltage()).
+  20:Voltage_Management.c **** float ADC_result_to_volts(int16 adcresult)
+  21:Voltage_Management.c **** {
+  31              		.loc 1 21 0
+  32              		.cfi_startproc
+  33              		@ args = 0, pretend = 0, frame = 0
+  34              		@ frame_needed = 0, uses_anonymous_args = 0
+  35              	.LVL0:
+  36 0000 08B5     		push	{r3, lr}
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 2
+
+
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 3, -8
+  39              		.cfi_offset 14, -4
+  22:Voltage_Management.c ****     float volts;
+  23:Voltage_Management.c ****     
+  24:Voltage_Management.c ****     volts = (adcresult / 4095.0) * (1.5 * 5.0);
+  40              		.loc 1 24 0
+  41 0002 FFF7FEFF 		bl	__aeabi_i2d
+  42              	.LVL1:
+  43 0006 06A3     		adr	r3, .L3
+  44 0008 D3E90023 		ldrd	r2, [r3]
+  45 000c FFF7FEFF 		bl	__aeabi_ddiv
+  46              	.LVL2:
+  47 0010 0022     		movs	r2, #0
+  48 0012 054B     		ldr	r3, .L3+8
+  49 0014 FFF7FEFF 		bl	__aeabi_dmul
+  50              	.LVL3:
+  51 0018 FFF7FEFF 		bl	__aeabi_d2f
+  52              	.LVL4:
+  25:Voltage_Management.c ****     
+  26:Voltage_Management.c ****     return volts;
+  27:Voltage_Management.c ****     
+  28:Voltage_Management.c **** }
+  53              		.loc 1 28 0
+  54 001c 08BD     		pop	{r3, pc}
+  55              	.L4:
+  56 001e 00BF     		.align	3
+  57              	.L3:
+  58 0020 00000000 		.word	0
+  59 0024 00FEAF40 		.word	1085275648
+  60 0028 00001E40 		.word	1075707904
+  61              		.cfi_endproc
+  62              	.LFE63:
+  63              		.size	ADC_result_to_volts, .-ADC_result_to_volts
+  64              		.global	__aeabi_fcmpge
+  65              		.global	__aeabi_fcmplt
+  66              		.global	__aeabi_f2d
+  67              		.global	__aeabi_dcmpge
+  68 002c AFF30080 		.section	.text.Measure_Voltage,"ax",%progbits
+  69              		.align	2
+  70              		.global	Measure_Voltage
+  71              		.thumb
+  72              		.thumb_func
+  73              		.type	Measure_Voltage, %function
+  74              	Measure_Voltage:
+  75              	.LFB64:
+  29:Voltage_Management.c **** 
+  30:Voltage_Management.c **** // For measuring the voltage of the batteries at regular intervals. Used in main.c.
+  31:Voltage_Management.c **** void Measure_Voltage()
+  32:Voltage_Management.c **** {
+  76              		.loc 1 32 0
+  77              		.cfi_startproc
+  78              		@ args = 0, pretend = 0, frame = 0
+  79              		@ frame_needed = 0, uses_anonymous_args = 0
+  80 0000 70B5     		push	{r4, r5, r6, lr}
+  81              		.cfi_def_cfa_offset 16
+  82              		.cfi_offset 4, -16
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 3
+
+
+  83              		.cfi_offset 5, -12
+  84              		.cfi_offset 6, -8
+  85              		.cfi_offset 14, -4
+  86              	.LVL5:
+  33:Voltage_Management.c ****     int16 adcresult = 0;
+  34:Voltage_Management.c ****     float volts = 0.0;
+  35:Voltage_Management.c ****     
+  36:Voltage_Management.c ****     int i;
+  37:Voltage_Management.c ****     
+  38:Voltage_Management.c ****     ADC_Battery_StartConvert();
+  87              		.loc 1 38 0
+  88 0002 FFF7FEFF 		bl	ADC_Battery_StartConvert
+  89              	.LVL6:
+  39:Voltage_Management.c ****     if(ADC_Battery_IsEndConversion(ADC_Battery_WAIT_FOR_RESULT)) 
+  90              		.loc 1 39 0
+  91 0006 0020     		movs	r0, #0
+  92 0008 FFF7FEFF 		bl	ADC_Battery_IsEndConversion
+  93              	.LVL7:
+  94 000c 0028     		cmp	r0, #0
+  95 000e 63D0     		beq	.L6
+  40:Voltage_Management.c ****     {   // wait for get ADC converted value
+  41:Voltage_Management.c ****         adcresult = ADC_Battery_GetResult16();
+  96              		.loc 1 41 0
+  97 0010 FFF7FEFF 		bl	ADC_Battery_GetResult16
+  98              	.LVL8:
+  99 0014 0646     		mov	r6, r0
+ 100              	.LVL9:
+  42:Voltage_Management.c ****         volts = ADC_result_to_volts(adcresult); // convert value to Volts
+ 101              		.loc 1 42 0
+ 102 0016 FFF7FEFF 		bl	ADC_result_to_volts
+ 103              	.LVL10:
+ 104 001a 0446     		mov	r4, r0
+ 105              	.LVL11:
+  43:Voltage_Management.c ****         
+  44:Voltage_Management.c ****         // Different types of beep sounds for different voltage levels. If the charge is over 5.0 V
+  45:Voltage_Management.c ****         // three long and low-sounding beeps; from 5.0 to 4.5 V, six medium-length, medium-pitch be
+  46:Voltage_Management.c ****         // 4.1 V, 9 loud and sharp beeps; and finally if the voltage reaches 4.1 V, there will be a
+  47:Voltage_Management.c ****         if (volts >= 5.0)
+ 106              		.loc 1 47 0
+ 107 001c 3449     		ldr	r1, .L26+8
+ 108 001e FFF7FEFF 		bl	__aeabi_fcmpge
+ 109              	.LVL12:
+ 110 0022 50B9     		cbnz	r0, .L19
+ 111 0024 0DE0     		b	.L24
+ 112              	.LVL13:
+ 113              	.L9:
+  48:Voltage_Management.c ****         { for (i = 0; i < 3; i++) 
+  49:Voltage_Management.c ****             {
+  50:Voltage_Management.c ****                 Beep(80, 60);
+ 114              		.loc 1 50 0 discriminator 3
+ 115 0026 5020     		movs	r0, #80
+ 116 0028 3C21     		movs	r1, #60
+ 117 002a FFF7FEFF 		bl	Beep
+ 118              	.LVL14:
+  51:Voltage_Management.c ****                 CyDelay(1000);
+ 119              		.loc 1 51 0 discriminator 3
+ 120 002e 4FF47A70 		mov	r0, #1000
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 4
+
+
+ 121 0032 FFF7FEFF 		bl	CyDelay
+ 122              	.LVL15:
+  48:Voltage_Management.c ****         { for (i = 0; i < 3; i++) 
+ 123              		.loc 1 48 0 discriminator 3
+ 124 0036 0135     		adds	r5, r5, #1
+ 125              	.LVL16:
+ 126 0038 00E0     		b	.L7
+ 127              	.LVL17:
+ 128              	.L19:
+ 129 003a 0025     		movs	r5, #0
+ 130              	.L7:
+ 131              	.LVL18:
+  48:Voltage_Management.c ****         { for (i = 0; i < 3; i++) 
+ 132              		.loc 1 48 0 is_stmt 0 discriminator 1
+ 133 003c 022D     		cmp	r5, #2
+ 134 003e F2DD     		ble	.L9
+ 135 0040 41E0     		b	.L10
+ 136              	.LVL19:
+ 137              	.L24:
+  52:Voltage_Management.c ****             }
+  53:Voltage_Management.c ****         } else if (volts < 5.0 && volts >= 4.5) {
+ 138              		.loc 1 53 0 is_stmt 1
+ 139 0042 2046     		mov	r0, r4
+ 140 0044 2A49     		ldr	r1, .L26+8
+ 141 0046 FFF7FEFF 		bl	__aeabi_fcmplt
+ 142              	.LVL20:
+ 143 004a 98B1     		cbz	r0, .L11
+ 144              		.loc 1 53 0 is_stmt 0 discriminator 1
+ 145 004c 2046     		mov	r0, r4
+ 146 004e 2949     		ldr	r1, .L26+12
+ 147 0050 FFF7FEFF 		bl	__aeabi_fcmpge
+ 148              	.LVL21:
+ 149 0054 50B9     		cbnz	r0, .L20
+ 150 0056 0DE0     		b	.L11
+ 151              	.LVL22:
+ 152              	.L14:
+  54:Voltage_Management.c ****          for (i = 0; i < 6; i++) 
+  55:Voltage_Management.c ****             {
+  56:Voltage_Management.c ****                 Beep(40, 80);
+ 153              		.loc 1 56 0 is_stmt 1 discriminator 3
+ 154 0058 2820     		movs	r0, #40
+ 155 005a 5021     		movs	r1, #80
+ 156 005c FFF7FEFF 		bl	Beep
+ 157              	.LVL23:
+  57:Voltage_Management.c ****                 CyDelay(1000);
+ 158              		.loc 1 57 0 discriminator 3
+ 159 0060 4FF47A70 		mov	r0, #1000
+ 160 0064 FFF7FEFF 		bl	CyDelay
+ 161              	.LVL24:
+  54:Voltage_Management.c ****          for (i = 0; i < 6; i++) 
+ 162              		.loc 1 54 0 discriminator 3
+ 163 0068 0135     		adds	r5, r5, #1
+ 164              	.LVL25:
+ 165 006a 00E0     		b	.L13
+ 166              	.LVL26:
+ 167              	.L20:
+ 168 006c 0025     		movs	r5, #0
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 5
+
+
+ 169              	.L13:
+ 170              	.LVL27:
+  54:Voltage_Management.c ****          for (i = 0; i < 6; i++) 
+ 171              		.loc 1 54 0 is_stmt 0 discriminator 1
+ 172 006e 052D     		cmp	r5, #5
+ 173 0070 F2DD     		ble	.L14
+ 174 0072 28E0     		b	.L10
+ 175              	.LVL28:
+ 176              	.L11:
+  58:Voltage_Management.c ****             }            
+  59:Voltage_Management.c ****         } else if (volts < 4.5 && volts >= 4.1) {
+ 177              		.loc 1 59 0 is_stmt 1
+ 178 0074 2046     		mov	r0, r4
+ 179 0076 1F49     		ldr	r1, .L26+12
+ 180 0078 FFF7FEFF 		bl	__aeabi_fcmplt
+ 181              	.LVL29:
+ 182 007c B8B1     		cbz	r0, .L15
+ 183              		.loc 1 59 0 is_stmt 0 discriminator 1
+ 184 007e 2046     		mov	r0, r4
+ 185 0080 FFF7FEFF 		bl	__aeabi_f2d
+ 186              	.LVL30:
+ 187 0084 18A3     		adr	r3, .L26
+ 188 0086 D3E90023 		ldrd	r2, [r3]
+ 189 008a FFF7FEFF 		bl	__aeabi_dcmpge
+ 190              	.LVL31:
+ 191 008e 50B9     		cbnz	r0, .L21
+ 192 0090 0DE0     		b	.L15
+ 193              	.LVL32:
+ 194              	.L18:
+  60:Voltage_Management.c ****         
+  61:Voltage_Management.c ****             for (i = 0; i < 9; i++) 
+  62:Voltage_Management.c ****             {
+  63:Voltage_Management.c ****                 Beep(30, 95);
+ 195              		.loc 1 63 0 is_stmt 1 discriminator 3
+ 196 0092 1E20     		movs	r0, #30
+ 197 0094 5F21     		movs	r1, #95
+ 198 0096 FFF7FEFF 		bl	Beep
+ 199              	.LVL33:
+  64:Voltage_Management.c ****                 CyDelay(1000);
+ 200              		.loc 1 64 0 discriminator 3
+ 201 009a 4FF47A70 		mov	r0, #1000
+ 202 009e FFF7FEFF 		bl	CyDelay
+ 203              	.LVL34:
+  61:Voltage_Management.c ****             {
+ 204              		.loc 1 61 0 discriminator 3
+ 205 00a2 0135     		adds	r5, r5, #1
+ 206              	.LVL35:
+ 207 00a4 00E0     		b	.L17
+ 208              	.LVL36:
+ 209              	.L21:
+ 210 00a6 0025     		movs	r5, #0
+ 211              	.L17:
+ 212              	.LVL37:
+  61:Voltage_Management.c ****             {
+ 213              		.loc 1 61 0 is_stmt 0 discriminator 1
+ 214 00a8 082D     		cmp	r5, #8
+ 215 00aa F2DD     		ble	.L18
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 6
+
+
+ 216 00ac 0BE0     		b	.L10
+ 217              	.LVL38:
+ 218              	.L15:
+  65:Voltage_Management.c ****             }       
+  66:Voltage_Management.c ****         } else {
+  67:Voltage_Management.c ****         
+  68:Voltage_Management.c ****             while (1) 
+  69:Voltage_Management.c ****             {
+  70:Voltage_Management.c ****                 Beep(20, 110);
+ 219              		.loc 1 70 0 is_stmt 1 discriminator 1
+ 220 00ae 1420     		movs	r0, #20
+ 221 00b0 6E21     		movs	r1, #110
+ 222 00b2 FFF7FEFF 		bl	Beep
+ 223              	.LVL39:
+  71:Voltage_Management.c ****                 CyDelay(1000);
+ 224              		.loc 1 71 0 discriminator 1
+ 225 00b6 4FF47A70 		mov	r0, #1000
+ 226 00ba FFF7FEFF 		bl	CyDelay
+ 227              	.LVL40:
+  72:Voltage_Management.c ****                 printf("DANGER! Battery LOW! Please charge ASAP!!!\n");
+ 228              		.loc 1 72 0 discriminator 1
+ 229 00be 0E48     		ldr	r0, .L26+16
+ 230 00c0 FFF7FEFF 		bl	puts
+ 231              	.LVL41:
+  73:Voltage_Management.c ****             }
+ 232              		.loc 1 73 0 discriminator 1
+ 233 00c4 F3E7     		b	.L15
+ 234              	.LVL42:
+ 235              	.L10:
+  74:Voltage_Management.c ****        
+  75:Voltage_Management.c ****         }
+  76:Voltage_Management.c ****         
+  77:Voltage_Management.c ****         
+  78:Voltage_Management.c ****         // Print value
+  79:Voltage_Management.c ****         printf("%d %f\r\n",adcresult, volts);
+ 236              		.loc 1 79 0
+ 237 00c6 2046     		mov	r0, r4
+ 238 00c8 FFF7FEFF 		bl	__aeabi_f2d
+ 239              	.LVL43:
+ 240 00cc 0246     		mov	r2, r0
+ 241 00ce 0B46     		mov	r3, r1
+ 242 00d0 0A48     		ldr	r0, .L26+20
+ 243 00d2 3146     		mov	r1, r6
+ 244 00d4 FFF7FEFF 		bl	printf
+ 245              	.LVL44:
+ 246              	.L6:
+  80:Voltage_Management.c ****     }
+  81:Voltage_Management.c ****         CyDelay(500);
+ 247              		.loc 1 81 0
+ 248 00d8 4FF4FA70 		mov	r0, #500
+ 249 00dc FFF7FEFF 		bl	CyDelay
+ 250              	.LVL45:
+ 251 00e0 70BD     		pop	{r4, r5, r6, pc}
+ 252              	.L27:
+ 253 00e2 00BFAFF3 		.align	3
+ 253      0080
+ 254              	.L26:
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 7
+
+
+ 255 00e8 66666666 		.word	1717986918
+ 256 00ec 66661040 		.word	1074816614
+ 257 00f0 0000A040 		.word	1084227584
+ 258 00f4 00009040 		.word	1083179008
+ 259 00f8 00000000 		.word	.LC0
+ 260 00fc 2C000000 		.word	.LC1
+ 261              		.cfi_endproc
+ 262              	.LFE64:
+ 263              		.size	Measure_Voltage, .-Measure_Voltage
+ 264              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 265              		.align	2
+ 266              	.LC0:
+ 267 0000 44414E47 		.ascii	"DANGER! Battery LOW! Please charge ASAP!!!\000"
+ 267      45522120 
+ 267      42617474 
+ 267      65727920 
+ 267      4C4F5721 
+ 268 002b 00       		.space	1
+ 269              	.LC1:
+ 270 002c 25642025 		.ascii	"%d %f\015\012\000"
+ 270      660D0A00 
+ 271              		.text
+ 272              	.Letext0:
+ 273              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 274              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 275              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 276              		.file 5 "Generated_Source\\PSoC5/CyLib.h"
+ 277              		.file 6 "<built-in>"
+ 278              		.file 7 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+ 279              		.file 8 "Generated_Source\\PSoC5/core_cm3.h"
+ 280              		.file 9 "Generated_Source\\PSoC5/ADC_Battery.h"
+ 281              		.section	.debug_info,"",%progbits
+ 282              	.Ldebug_info0:
+ 283 0000 09030000 		.4byte	0x309
+ 284 0004 0400     		.2byte	0x4
+ 285 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 286 000a 04       		.byte	0x4
+ 287 000b 01       		.uleb128 0x1
+ 288 000c F5000000 		.4byte	.LASF26
+ 289 0010 01       		.byte	0x1
+ 290 0011 00000000 		.4byte	.LASF27
+ 291 0015 AD000000 		.4byte	.LASF28
+ 292 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 293 001d 00000000 		.4byte	0
+ 294 0021 00000000 		.4byte	.Ldebug_line0
+ 295 0025 02       		.uleb128 0x2
+ 296 0026 01       		.byte	0x1
+ 297 0027 06       		.byte	0x6
+ 298 0028 3D020000 		.4byte	.LASF0
+ 299 002c 02       		.uleb128 0x2
+ 300 002d 01       		.byte	0x1
+ 301 002e 08       		.byte	0x8
+ 302 002f 50000000 		.4byte	.LASF1
+ 303 0033 02       		.uleb128 0x2
+ 304 0034 02       		.byte	0x2
+ 305 0035 05       		.byte	0x5
+ 306 0036 1F020000 		.4byte	.LASF2
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 8
+
+
+ 307 003a 02       		.uleb128 0x2
+ 308 003b 02       		.byte	0x2
+ 309 003c 07       		.byte	0x7
+ 310 003d 76000000 		.4byte	.LASF3
+ 311 0041 03       		.uleb128 0x3
+ 312 0042 15000000 		.4byte	.LASF9
+ 313 0046 02       		.byte	0x2
+ 314 0047 3F       		.byte	0x3f
+ 315 0048 4C000000 		.4byte	0x4c
+ 316 004c 02       		.uleb128 0x2
+ 317 004d 04       		.byte	0x4
+ 318 004e 05       		.byte	0x5
+ 319 004f 2F020000 		.4byte	.LASF4
+ 320 0053 02       		.uleb128 0x2
+ 321 0054 04       		.byte	0x4
+ 322 0055 07       		.byte	0x7
+ 323 0056 64000000 		.4byte	.LASF5
+ 324 005a 02       		.uleb128 0x2
+ 325 005b 08       		.byte	0x8
+ 326 005c 05       		.byte	0x5
+ 327 005d DF010000 		.4byte	.LASF6
+ 328 0061 02       		.uleb128 0x2
+ 329 0062 08       		.byte	0x8
+ 330 0063 07       		.byte	0x7
+ 331 0064 A8010000 		.4byte	.LASF7
+ 332 0068 04       		.uleb128 0x4
+ 333 0069 04       		.byte	0x4
+ 334 006a 05       		.byte	0x5
+ 335 006b 696E7400 		.ascii	"int\000"
+ 336 006f 02       		.uleb128 0x2
+ 337 0070 04       		.byte	0x4
+ 338 0071 07       		.byte	0x7
+ 339 0072 83010000 		.4byte	.LASF8
+ 340 0076 03       		.uleb128 0x3
+ 341 0077 33000000 		.4byte	.LASF10
+ 342 007b 03       		.byte	0x3
+ 343 007c 2C       		.byte	0x2c
+ 344 007d 41000000 		.4byte	0x41
+ 345 0081 05       		.uleb128 0x5
+ 346 0082 29020000 		.4byte	.LASF11
+ 347 0086 04       		.byte	0x4
+ 348 0087 9201     		.2byte	0x192
+ 349 0089 2C000000 		.4byte	0x2c
+ 350 008d 05       		.uleb128 0x5
+ 351 008e EE000000 		.4byte	.LASF12
+ 352 0092 04       		.byte	0x4
+ 353 0093 9401     		.2byte	0x194
+ 354 0095 53000000 		.4byte	0x53
+ 355 0099 05       		.uleb128 0x5
+ 356 009a 5E000000 		.4byte	.LASF13
+ 357 009e 04       		.byte	0x4
+ 358 009f 9601     		.2byte	0x196
+ 359 00a1 33000000 		.4byte	0x33
+ 360 00a5 02       		.uleb128 0x2
+ 361 00a6 04       		.byte	0x4
+ 362 00a7 04       		.byte	0x4
+ 363 00a8 3B000000 		.4byte	.LASF14
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 9
+
+
+ 364 00ac 02       		.uleb128 0x2
+ 365 00ad 08       		.byte	0x8
+ 366 00ae 04       		.byte	0x4
+ 367 00af A6000000 		.4byte	.LASF15
+ 368 00b3 02       		.uleb128 0x2
+ 369 00b4 01       		.byte	0x1
+ 370 00b5 08       		.byte	0x8
+ 371 00b6 ED010000 		.4byte	.LASF16
+ 372 00ba 02       		.uleb128 0x2
+ 373 00bb 04       		.byte	0x4
+ 374 00bc 07       		.byte	0x7
+ 375 00bd D6010000 		.4byte	.LASF17
+ 376 00c1 06       		.uleb128 0x6
+ 377 00c2 04       		.byte	0x4
+ 378 00c3 C7000000 		.4byte	0xc7
+ 379 00c7 07       		.uleb128 0x7
+ 380 00c8 B3000000 		.4byte	0xb3
+ 381 00cc 02       		.uleb128 0x2
+ 382 00cd 08       		.byte	0x8
+ 383 00ce 04       		.byte	0x4
+ 384 00cf CA010000 		.4byte	.LASF18
+ 385 00d3 08       		.uleb128 0x8
+ 386 00d4 1F000000 		.4byte	.LASF29
+ 387 00d8 01       		.byte	0x1
+ 388 00d9 14       		.byte	0x14
+ 389 00da A5000000 		.4byte	0xa5
+ 390 00de 00000000 		.4byte	.LFB63
+ 391 00e2 2C000000 		.4byte	.LFE63-.LFB63
+ 392 00e6 01       		.uleb128 0x1
+ 393 00e7 9C       		.byte	0x9c
+ 394 00e8 09010000 		.4byte	0x109
+ 395 00ec 09       		.uleb128 0x9
+ 396 00ed F2010000 		.4byte	.LASF20
+ 397 00f1 01       		.byte	0x1
+ 398 00f2 14       		.byte	0x14
+ 399 00f3 99000000 		.4byte	0x99
+ 400 00f7 00000000 		.4byte	.LLST0
+ 401 00fb 0A       		.uleb128 0xa
+ 402 00fc C4010000 		.4byte	.LASF19
+ 403 0100 01       		.byte	0x1
+ 404 0101 16       		.byte	0x16
+ 405 0102 A5000000 		.4byte	0xa5
+ 406 0106 01       		.uleb128 0x1
+ 407 0107 50       		.byte	0x50
+ 408 0108 00       		.byte	0
+ 409 0109 0B       		.uleb128 0xb
+ 410 010a 89000000 		.4byte	.LASF23
+ 411 010e 01       		.byte	0x1
+ 412 010f 1F       		.byte	0x1f
+ 413 0110 00000000 		.4byte	.LFB64
+ 414 0114 00010000 		.4byte	.LFE64-.LFB64
+ 415 0118 01       		.uleb128 0x1
+ 416 0119 9C       		.byte	0x9c
+ 417 011a 82020000 		.4byte	0x282
+ 418 011e 0C       		.uleb128 0xc
+ 419 011f F2010000 		.4byte	.LASF20
+ 420 0123 01       		.byte	0x1
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 10
+
+
+ 421 0124 21       		.byte	0x21
+ 422 0125 99000000 		.4byte	0x99
+ 423 0129 21000000 		.4byte	.LLST1
+ 424 012d 0C       		.uleb128 0xc
+ 425 012e C4010000 		.4byte	.LASF19
+ 426 0132 01       		.byte	0x1
+ 427 0133 22       		.byte	0x22
+ 428 0134 A5000000 		.4byte	0xa5
+ 429 0138 40000000 		.4byte	.LLST2
+ 430 013c 0D       		.uleb128 0xd
+ 431 013d 6900     		.ascii	"i\000"
+ 432 013f 01       		.byte	0x1
+ 433 0140 24       		.byte	0x24
+ 434 0141 68000000 		.4byte	0x68
+ 435 0145 6E000000 		.4byte	.LLST3
+ 436 0149 0E       		.uleb128 0xe
+ 437 014a 06000000 		.4byte	.LVL6
+ 438 014e 93020000 		.4byte	0x293
+ 439 0152 0F       		.uleb128 0xf
+ 440 0153 0C000000 		.4byte	.LVL7
+ 441 0157 9A020000 		.4byte	0x29a
+ 442 015b 65010000 		.4byte	0x165
+ 443 015f 10       		.uleb128 0x10
+ 444 0160 01       		.uleb128 0x1
+ 445 0161 50       		.byte	0x50
+ 446 0162 01       		.uleb128 0x1
+ 447 0163 30       		.byte	0x30
+ 448 0164 00       		.byte	0
+ 449 0165 0E       		.uleb128 0xe
+ 450 0166 14000000 		.4byte	.LVL8
+ 451 016a AF020000 		.4byte	0x2af
+ 452 016e 0F       		.uleb128 0xf
+ 453 016f 1A000000 		.4byte	.LVL10
+ 454 0173 D3000000 		.4byte	0xd3
+ 455 0177 82010000 		.4byte	0x182
+ 456 017b 10       		.uleb128 0x10
+ 457 017c 01       		.uleb128 0x1
+ 458 017d 50       		.byte	0x50
+ 459 017e 02       		.uleb128 0x2
+ 460 017f 76       		.byte	0x76
+ 461 0180 00       		.sleb128 0
+ 462 0181 00       		.byte	0
+ 463 0182 0F       		.uleb128 0xf
+ 464 0183 2E000000 		.4byte	.LVL14
+ 465 0187 BA020000 		.4byte	0x2ba
+ 466 018b 9C010000 		.4byte	0x19c
+ 467 018f 10       		.uleb128 0x10
+ 468 0190 01       		.uleb128 0x1
+ 469 0191 51       		.byte	0x51
+ 470 0192 02       		.uleb128 0x2
+ 471 0193 08       		.byte	0x8
+ 472 0194 3C       		.byte	0x3c
+ 473 0195 10       		.uleb128 0x10
+ 474 0196 01       		.uleb128 0x1
+ 475 0197 50       		.byte	0x50
+ 476 0198 02       		.uleb128 0x2
+ 477 0199 08       		.byte	0x8
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 11
+
+
+ 478 019a 50       		.byte	0x50
+ 479 019b 00       		.byte	0
+ 480 019c 0F       		.uleb128 0xf
+ 481 019d 36000000 		.4byte	.LVL15
+ 482 01a1 D0020000 		.4byte	0x2d0
+ 483 01a5 B1010000 		.4byte	0x1b1
+ 484 01a9 10       		.uleb128 0x10
+ 485 01aa 01       		.uleb128 0x1
+ 486 01ab 50       		.byte	0x50
+ 487 01ac 03       		.uleb128 0x3
+ 488 01ad 0A       		.byte	0xa
+ 489 01ae E803     		.2byte	0x3e8
+ 490 01b0 00       		.byte	0
+ 491 01b1 0F       		.uleb128 0xf
+ 492 01b2 60000000 		.4byte	.LVL23
+ 493 01b6 BA020000 		.4byte	0x2ba
+ 494 01ba CB010000 		.4byte	0x1cb
+ 495 01be 10       		.uleb128 0x10
+ 496 01bf 01       		.uleb128 0x1
+ 497 01c0 51       		.byte	0x51
+ 498 01c1 02       		.uleb128 0x2
+ 499 01c2 08       		.byte	0x8
+ 500 01c3 50       		.byte	0x50
+ 501 01c4 10       		.uleb128 0x10
+ 502 01c5 01       		.uleb128 0x1
+ 503 01c6 50       		.byte	0x50
+ 504 01c7 02       		.uleb128 0x2
+ 505 01c8 08       		.byte	0x8
+ 506 01c9 28       		.byte	0x28
+ 507 01ca 00       		.byte	0
+ 508 01cb 0F       		.uleb128 0xf
+ 509 01cc 68000000 		.4byte	.LVL24
+ 510 01d0 D0020000 		.4byte	0x2d0
+ 511 01d4 E0010000 		.4byte	0x1e0
+ 512 01d8 10       		.uleb128 0x10
+ 513 01d9 01       		.uleb128 0x1
+ 514 01da 50       		.byte	0x50
+ 515 01db 03       		.uleb128 0x3
+ 516 01dc 0A       		.byte	0xa
+ 517 01dd E803     		.2byte	0x3e8
+ 518 01df 00       		.byte	0
+ 519 01e0 0F       		.uleb128 0xf
+ 520 01e1 9A000000 		.4byte	.LVL33
+ 521 01e5 BA020000 		.4byte	0x2ba
+ 522 01e9 F9010000 		.4byte	0x1f9
+ 523 01ed 10       		.uleb128 0x10
+ 524 01ee 01       		.uleb128 0x1
+ 525 01ef 51       		.byte	0x51
+ 526 01f0 02       		.uleb128 0x2
+ 527 01f1 08       		.byte	0x8
+ 528 01f2 5F       		.byte	0x5f
+ 529 01f3 10       		.uleb128 0x10
+ 530 01f4 01       		.uleb128 0x1
+ 531 01f5 50       		.byte	0x50
+ 532 01f6 01       		.uleb128 0x1
+ 533 01f7 4E       		.byte	0x4e
+ 534 01f8 00       		.byte	0
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 12
+
+
+ 535 01f9 0F       		.uleb128 0xf
+ 536 01fa A2000000 		.4byte	.LVL34
+ 537 01fe D0020000 		.4byte	0x2d0
+ 538 0202 0E020000 		.4byte	0x20e
+ 539 0206 10       		.uleb128 0x10
+ 540 0207 01       		.uleb128 0x1
+ 541 0208 50       		.byte	0x50
+ 542 0209 03       		.uleb128 0x3
+ 543 020a 0A       		.byte	0xa
+ 544 020b E803     		.2byte	0x3e8
+ 545 020d 00       		.byte	0
+ 546 020e 0F       		.uleb128 0xf
+ 547 020f B6000000 		.4byte	.LVL39
+ 548 0213 BA020000 		.4byte	0x2ba
+ 549 0217 27020000 		.4byte	0x227
+ 550 021b 10       		.uleb128 0x10
+ 551 021c 01       		.uleb128 0x1
+ 552 021d 51       		.byte	0x51
+ 553 021e 02       		.uleb128 0x2
+ 554 021f 08       		.byte	0x8
+ 555 0220 6E       		.byte	0x6e
+ 556 0221 10       		.uleb128 0x10
+ 557 0222 01       		.uleb128 0x1
+ 558 0223 50       		.byte	0x50
+ 559 0224 01       		.uleb128 0x1
+ 560 0225 44       		.byte	0x44
+ 561 0226 00       		.byte	0
+ 562 0227 0F       		.uleb128 0xf
+ 563 0228 BE000000 		.4byte	.LVL40
+ 564 022c D0020000 		.4byte	0x2d0
+ 565 0230 3C020000 		.4byte	0x23c
+ 566 0234 10       		.uleb128 0x10
+ 567 0235 01       		.uleb128 0x1
+ 568 0236 50       		.byte	0x50
+ 569 0237 03       		.uleb128 0x3
+ 570 0238 0A       		.byte	0xa
+ 571 0239 E803     		.2byte	0x3e8
+ 572 023b 00       		.byte	0
+ 573 023c 0F       		.uleb128 0xf
+ 574 023d C4000000 		.4byte	.LVL41
+ 575 0241 E1020000 		.4byte	0x2e1
+ 576 0245 53020000 		.4byte	0x253
+ 577 0249 10       		.uleb128 0x10
+ 578 024a 01       		.uleb128 0x1
+ 579 024b 50       		.byte	0x50
+ 580 024c 05       		.uleb128 0x5
+ 581 024d 03       		.byte	0x3
+ 582 024e 00000000 		.4byte	.LC0
+ 583 0252 00       		.byte	0
+ 584 0253 0F       		.uleb128 0xf
+ 585 0254 D8000000 		.4byte	.LVL44
+ 586 0258 FA020000 		.4byte	0x2fa
+ 587 025c 70020000 		.4byte	0x270
+ 588 0260 10       		.uleb128 0x10
+ 589 0261 01       		.uleb128 0x1
+ 590 0262 51       		.byte	0x51
+ 591 0263 02       		.uleb128 0x2
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 13
+
+
+ 592 0264 76       		.byte	0x76
+ 593 0265 00       		.sleb128 0
+ 594 0266 10       		.uleb128 0x10
+ 595 0267 01       		.uleb128 0x1
+ 596 0268 50       		.byte	0x50
+ 597 0269 05       		.uleb128 0x5
+ 598 026a 03       		.byte	0x3
+ 599 026b 2C000000 		.4byte	.LC1
+ 600 026f 00       		.byte	0
+ 601 0270 11       		.uleb128 0x11
+ 602 0271 E0000000 		.4byte	.LVL45
+ 603 0275 D0020000 		.4byte	0x2d0
+ 604 0279 10       		.uleb128 0x10
+ 605 027a 01       		.uleb128 0x1
+ 606 027b 50       		.byte	0x50
+ 607 027c 03       		.uleb128 0x3
+ 608 027d 0A       		.byte	0xa
+ 609 027e F401     		.2byte	0x1f4
+ 610 0280 00       		.byte	0
+ 611 0281 00       		.byte	0
+ 612 0282 12       		.uleb128 0x12
+ 613 0283 99000000 		.4byte	.LASF30
+ 614 0287 08       		.byte	0x8
+ 615 0288 9606     		.2byte	0x696
+ 616 028a 8E020000 		.4byte	0x28e
+ 617 028e 13       		.uleb128 0x13
+ 618 028f 76000000 		.4byte	0x76
+ 619 0293 14       		.uleb128 0x14
+ 620 0294 49020000 		.4byte	.LASF31
+ 621 0298 09       		.byte	0x9
+ 622 0299 D1       		.byte	0xd1
+ 623 029a 15       		.uleb128 0x15
+ 624 029b 03020000 		.4byte	.LASF32
+ 625 029f 09       		.byte	0x9
+ 626 02a0 39       		.byte	0x39
+ 627 02a1 81000000 		.4byte	0x81
+ 628 02a5 AF020000 		.4byte	0x2af
+ 629 02a9 16       		.uleb128 0x16
+ 630 02aa 81000000 		.4byte	0x81
+ 631 02ae 00       		.byte	0
+ 632 02af 17       		.uleb128 0x17
+ 633 02b0 90010000 		.4byte	.LASF33
+ 634 02b4 09       		.byte	0x9
+ 635 02b5 3B       		.byte	0x3b
+ 636 02b6 99000000 		.4byte	0x99
+ 637 02ba 18       		.uleb128 0x18
+ 638 02bb BF010000 		.4byte	.LASF21
+ 639 02bf 01       		.byte	0x1
+ 640 02c0 10       		.byte	0x10
+ 641 02c1 D0020000 		.4byte	0x2d0
+ 642 02c5 16       		.uleb128 0x16
+ 643 02c6 8D000000 		.4byte	0x8d
+ 644 02ca 16       		.uleb128 0x16
+ 645 02cb 81000000 		.4byte	0x81
+ 646 02cf 00       		.byte	0
+ 647 02d0 18       		.uleb128 0x18
+ 648 02d1 62020000 		.4byte	.LASF22
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 14
+
+
+ 649 02d5 05       		.byte	0x5
+ 650 02d6 76       		.byte	0x76
+ 651 02d7 E1020000 		.4byte	0x2e1
+ 652 02db 16       		.uleb128 0x16
+ 653 02dc 8D000000 		.4byte	0x8d
+ 654 02e0 00       		.byte	0
+ 655 02e1 19       		.uleb128 0x19
+ 656 02e2 41000000 		.4byte	.LASF24
+ 657 02e6 06       		.byte	0x6
+ 658 02e7 00       		.byte	0
+ 659 02e8 38020000 		.4byte	.LASF34
+ 660 02ec 68000000 		.4byte	0x68
+ 661 02f0 FA020000 		.4byte	0x2fa
+ 662 02f4 16       		.uleb128 0x16
+ 663 02f5 C1000000 		.4byte	0xc1
+ 664 02f9 00       		.byte	0
+ 665 02fa 1A       		.uleb128 0x1a
+ 666 02fb FC010000 		.4byte	.LASF25
+ 667 02ff 07       		.byte	0x7
+ 668 0300 B2       		.byte	0xb2
+ 669 0301 68000000 		.4byte	0x68
+ 670 0305 16       		.uleb128 0x16
+ 671 0306 C1000000 		.4byte	0xc1
+ 672 030a 1B       		.uleb128 0x1b
+ 673 030b 00       		.byte	0
+ 674 030c 00       		.byte	0
+ 675              		.section	.debug_abbrev,"",%progbits
+ 676              	.Ldebug_abbrev0:
+ 677 0000 01       		.uleb128 0x1
+ 678 0001 11       		.uleb128 0x11
+ 679 0002 01       		.byte	0x1
+ 680 0003 25       		.uleb128 0x25
+ 681 0004 0E       		.uleb128 0xe
+ 682 0005 13       		.uleb128 0x13
+ 683 0006 0B       		.uleb128 0xb
+ 684 0007 03       		.uleb128 0x3
+ 685 0008 0E       		.uleb128 0xe
+ 686 0009 1B       		.uleb128 0x1b
+ 687 000a 0E       		.uleb128 0xe
+ 688 000b 55       		.uleb128 0x55
+ 689 000c 17       		.uleb128 0x17
+ 690 000d 11       		.uleb128 0x11
+ 691 000e 01       		.uleb128 0x1
+ 692 000f 10       		.uleb128 0x10
+ 693 0010 17       		.uleb128 0x17
+ 694 0011 00       		.byte	0
+ 695 0012 00       		.byte	0
+ 696 0013 02       		.uleb128 0x2
+ 697 0014 24       		.uleb128 0x24
+ 698 0015 00       		.byte	0
+ 699 0016 0B       		.uleb128 0xb
+ 700 0017 0B       		.uleb128 0xb
+ 701 0018 3E       		.uleb128 0x3e
+ 702 0019 0B       		.uleb128 0xb
+ 703 001a 03       		.uleb128 0x3
+ 704 001b 0E       		.uleb128 0xe
+ 705 001c 00       		.byte	0
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 15
+
+
+ 706 001d 00       		.byte	0
+ 707 001e 03       		.uleb128 0x3
+ 708 001f 16       		.uleb128 0x16
+ 709 0020 00       		.byte	0
+ 710 0021 03       		.uleb128 0x3
+ 711 0022 0E       		.uleb128 0xe
+ 712 0023 3A       		.uleb128 0x3a
+ 713 0024 0B       		.uleb128 0xb
+ 714 0025 3B       		.uleb128 0x3b
+ 715 0026 0B       		.uleb128 0xb
+ 716 0027 49       		.uleb128 0x49
+ 717 0028 13       		.uleb128 0x13
+ 718 0029 00       		.byte	0
+ 719 002a 00       		.byte	0
+ 720 002b 04       		.uleb128 0x4
+ 721 002c 24       		.uleb128 0x24
+ 722 002d 00       		.byte	0
+ 723 002e 0B       		.uleb128 0xb
+ 724 002f 0B       		.uleb128 0xb
+ 725 0030 3E       		.uleb128 0x3e
+ 726 0031 0B       		.uleb128 0xb
+ 727 0032 03       		.uleb128 0x3
+ 728 0033 08       		.uleb128 0x8
+ 729 0034 00       		.byte	0
+ 730 0035 00       		.byte	0
+ 731 0036 05       		.uleb128 0x5
+ 732 0037 16       		.uleb128 0x16
+ 733 0038 00       		.byte	0
+ 734 0039 03       		.uleb128 0x3
+ 735 003a 0E       		.uleb128 0xe
+ 736 003b 3A       		.uleb128 0x3a
+ 737 003c 0B       		.uleb128 0xb
+ 738 003d 3B       		.uleb128 0x3b
+ 739 003e 05       		.uleb128 0x5
+ 740 003f 49       		.uleb128 0x49
+ 741 0040 13       		.uleb128 0x13
+ 742 0041 00       		.byte	0
+ 743 0042 00       		.byte	0
+ 744 0043 06       		.uleb128 0x6
+ 745 0044 0F       		.uleb128 0xf
+ 746 0045 00       		.byte	0
+ 747 0046 0B       		.uleb128 0xb
+ 748 0047 0B       		.uleb128 0xb
+ 749 0048 49       		.uleb128 0x49
+ 750 0049 13       		.uleb128 0x13
+ 751 004a 00       		.byte	0
+ 752 004b 00       		.byte	0
+ 753 004c 07       		.uleb128 0x7
+ 754 004d 26       		.uleb128 0x26
+ 755 004e 00       		.byte	0
+ 756 004f 49       		.uleb128 0x49
+ 757 0050 13       		.uleb128 0x13
+ 758 0051 00       		.byte	0
+ 759 0052 00       		.byte	0
+ 760 0053 08       		.uleb128 0x8
+ 761 0054 2E       		.uleb128 0x2e
+ 762 0055 01       		.byte	0x1
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 16
+
+
+ 763 0056 3F       		.uleb128 0x3f
+ 764 0057 19       		.uleb128 0x19
+ 765 0058 03       		.uleb128 0x3
+ 766 0059 0E       		.uleb128 0xe
+ 767 005a 3A       		.uleb128 0x3a
+ 768 005b 0B       		.uleb128 0xb
+ 769 005c 3B       		.uleb128 0x3b
+ 770 005d 0B       		.uleb128 0xb
+ 771 005e 27       		.uleb128 0x27
+ 772 005f 19       		.uleb128 0x19
+ 773 0060 49       		.uleb128 0x49
+ 774 0061 13       		.uleb128 0x13
+ 775 0062 11       		.uleb128 0x11
+ 776 0063 01       		.uleb128 0x1
+ 777 0064 12       		.uleb128 0x12
+ 778 0065 06       		.uleb128 0x6
+ 779 0066 40       		.uleb128 0x40
+ 780 0067 18       		.uleb128 0x18
+ 781 0068 9642     		.uleb128 0x2116
+ 782 006a 19       		.uleb128 0x19
+ 783 006b 01       		.uleb128 0x1
+ 784 006c 13       		.uleb128 0x13
+ 785 006d 00       		.byte	0
+ 786 006e 00       		.byte	0
+ 787 006f 09       		.uleb128 0x9
+ 788 0070 05       		.uleb128 0x5
+ 789 0071 00       		.byte	0
+ 790 0072 03       		.uleb128 0x3
+ 791 0073 0E       		.uleb128 0xe
+ 792 0074 3A       		.uleb128 0x3a
+ 793 0075 0B       		.uleb128 0xb
+ 794 0076 3B       		.uleb128 0x3b
+ 795 0077 0B       		.uleb128 0xb
+ 796 0078 49       		.uleb128 0x49
+ 797 0079 13       		.uleb128 0x13
+ 798 007a 02       		.uleb128 0x2
+ 799 007b 17       		.uleb128 0x17
+ 800 007c 00       		.byte	0
+ 801 007d 00       		.byte	0
+ 802 007e 0A       		.uleb128 0xa
+ 803 007f 34       		.uleb128 0x34
+ 804 0080 00       		.byte	0
+ 805 0081 03       		.uleb128 0x3
+ 806 0082 0E       		.uleb128 0xe
+ 807 0083 3A       		.uleb128 0x3a
+ 808 0084 0B       		.uleb128 0xb
+ 809 0085 3B       		.uleb128 0x3b
+ 810 0086 0B       		.uleb128 0xb
+ 811 0087 49       		.uleb128 0x49
+ 812 0088 13       		.uleb128 0x13
+ 813 0089 02       		.uleb128 0x2
+ 814 008a 18       		.uleb128 0x18
+ 815 008b 00       		.byte	0
+ 816 008c 00       		.byte	0
+ 817 008d 0B       		.uleb128 0xb
+ 818 008e 2E       		.uleb128 0x2e
+ 819 008f 01       		.byte	0x1
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 17
+
+
+ 820 0090 3F       		.uleb128 0x3f
+ 821 0091 19       		.uleb128 0x19
+ 822 0092 03       		.uleb128 0x3
+ 823 0093 0E       		.uleb128 0xe
+ 824 0094 3A       		.uleb128 0x3a
+ 825 0095 0B       		.uleb128 0xb
+ 826 0096 3B       		.uleb128 0x3b
+ 827 0097 0B       		.uleb128 0xb
+ 828 0098 11       		.uleb128 0x11
+ 829 0099 01       		.uleb128 0x1
+ 830 009a 12       		.uleb128 0x12
+ 831 009b 06       		.uleb128 0x6
+ 832 009c 40       		.uleb128 0x40
+ 833 009d 18       		.uleb128 0x18
+ 834 009e 9642     		.uleb128 0x2116
+ 835 00a0 19       		.uleb128 0x19
+ 836 00a1 01       		.uleb128 0x1
+ 837 00a2 13       		.uleb128 0x13
+ 838 00a3 00       		.byte	0
+ 839 00a4 00       		.byte	0
+ 840 00a5 0C       		.uleb128 0xc
+ 841 00a6 34       		.uleb128 0x34
+ 842 00a7 00       		.byte	0
+ 843 00a8 03       		.uleb128 0x3
+ 844 00a9 0E       		.uleb128 0xe
+ 845 00aa 3A       		.uleb128 0x3a
+ 846 00ab 0B       		.uleb128 0xb
+ 847 00ac 3B       		.uleb128 0x3b
+ 848 00ad 0B       		.uleb128 0xb
+ 849 00ae 49       		.uleb128 0x49
+ 850 00af 13       		.uleb128 0x13
+ 851 00b0 02       		.uleb128 0x2
+ 852 00b1 17       		.uleb128 0x17
+ 853 00b2 00       		.byte	0
+ 854 00b3 00       		.byte	0
+ 855 00b4 0D       		.uleb128 0xd
+ 856 00b5 34       		.uleb128 0x34
+ 857 00b6 00       		.byte	0
+ 858 00b7 03       		.uleb128 0x3
+ 859 00b8 08       		.uleb128 0x8
+ 860 00b9 3A       		.uleb128 0x3a
+ 861 00ba 0B       		.uleb128 0xb
+ 862 00bb 3B       		.uleb128 0x3b
+ 863 00bc 0B       		.uleb128 0xb
+ 864 00bd 49       		.uleb128 0x49
+ 865 00be 13       		.uleb128 0x13
+ 866 00bf 02       		.uleb128 0x2
+ 867 00c0 17       		.uleb128 0x17
+ 868 00c1 00       		.byte	0
+ 869 00c2 00       		.byte	0
+ 870 00c3 0E       		.uleb128 0xe
+ 871 00c4 898201   		.uleb128 0x4109
+ 872 00c7 00       		.byte	0
+ 873 00c8 11       		.uleb128 0x11
+ 874 00c9 01       		.uleb128 0x1
+ 875 00ca 31       		.uleb128 0x31
+ 876 00cb 13       		.uleb128 0x13
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 18
+
+
+ 877 00cc 00       		.byte	0
+ 878 00cd 00       		.byte	0
+ 879 00ce 0F       		.uleb128 0xf
+ 880 00cf 898201   		.uleb128 0x4109
+ 881 00d2 01       		.byte	0x1
+ 882 00d3 11       		.uleb128 0x11
+ 883 00d4 01       		.uleb128 0x1
+ 884 00d5 31       		.uleb128 0x31
+ 885 00d6 13       		.uleb128 0x13
+ 886 00d7 01       		.uleb128 0x1
+ 887 00d8 13       		.uleb128 0x13
+ 888 00d9 00       		.byte	0
+ 889 00da 00       		.byte	0
+ 890 00db 10       		.uleb128 0x10
+ 891 00dc 8A8201   		.uleb128 0x410a
+ 892 00df 00       		.byte	0
+ 893 00e0 02       		.uleb128 0x2
+ 894 00e1 18       		.uleb128 0x18
+ 895 00e2 9142     		.uleb128 0x2111
+ 896 00e4 18       		.uleb128 0x18
+ 897 00e5 00       		.byte	0
+ 898 00e6 00       		.byte	0
+ 899 00e7 11       		.uleb128 0x11
+ 900 00e8 898201   		.uleb128 0x4109
+ 901 00eb 01       		.byte	0x1
+ 902 00ec 11       		.uleb128 0x11
+ 903 00ed 01       		.uleb128 0x1
+ 904 00ee 31       		.uleb128 0x31
+ 905 00ef 13       		.uleb128 0x13
+ 906 00f0 00       		.byte	0
+ 907 00f1 00       		.byte	0
+ 908 00f2 12       		.uleb128 0x12
+ 909 00f3 34       		.uleb128 0x34
+ 910 00f4 00       		.byte	0
+ 911 00f5 03       		.uleb128 0x3
+ 912 00f6 0E       		.uleb128 0xe
+ 913 00f7 3A       		.uleb128 0x3a
+ 914 00f8 0B       		.uleb128 0xb
+ 915 00f9 3B       		.uleb128 0x3b
+ 916 00fa 05       		.uleb128 0x5
+ 917 00fb 49       		.uleb128 0x49
+ 918 00fc 13       		.uleb128 0x13
+ 919 00fd 3F       		.uleb128 0x3f
+ 920 00fe 19       		.uleb128 0x19
+ 921 00ff 3C       		.uleb128 0x3c
+ 922 0100 19       		.uleb128 0x19
+ 923 0101 00       		.byte	0
+ 924 0102 00       		.byte	0
+ 925 0103 13       		.uleb128 0x13
+ 926 0104 35       		.uleb128 0x35
+ 927 0105 00       		.byte	0
+ 928 0106 49       		.uleb128 0x49
+ 929 0107 13       		.uleb128 0x13
+ 930 0108 00       		.byte	0
+ 931 0109 00       		.byte	0
+ 932 010a 14       		.uleb128 0x14
+ 933 010b 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 19
+
+
+ 934 010c 00       		.byte	0
+ 935 010d 3F       		.uleb128 0x3f
+ 936 010e 19       		.uleb128 0x19
+ 937 010f 03       		.uleb128 0x3
+ 938 0110 0E       		.uleb128 0xe
+ 939 0111 3A       		.uleb128 0x3a
+ 940 0112 0B       		.uleb128 0xb
+ 941 0113 3B       		.uleb128 0x3b
+ 942 0114 0B       		.uleb128 0xb
+ 943 0115 27       		.uleb128 0x27
+ 944 0116 19       		.uleb128 0x19
+ 945 0117 3C       		.uleb128 0x3c
+ 946 0118 19       		.uleb128 0x19
+ 947 0119 00       		.byte	0
+ 948 011a 00       		.byte	0
+ 949 011b 15       		.uleb128 0x15
+ 950 011c 2E       		.uleb128 0x2e
+ 951 011d 01       		.byte	0x1
+ 952 011e 3F       		.uleb128 0x3f
+ 953 011f 19       		.uleb128 0x19
+ 954 0120 03       		.uleb128 0x3
+ 955 0121 0E       		.uleb128 0xe
+ 956 0122 3A       		.uleb128 0x3a
+ 957 0123 0B       		.uleb128 0xb
+ 958 0124 3B       		.uleb128 0x3b
+ 959 0125 0B       		.uleb128 0xb
+ 960 0126 27       		.uleb128 0x27
+ 961 0127 19       		.uleb128 0x19
+ 962 0128 49       		.uleb128 0x49
+ 963 0129 13       		.uleb128 0x13
+ 964 012a 3C       		.uleb128 0x3c
+ 965 012b 19       		.uleb128 0x19
+ 966 012c 01       		.uleb128 0x1
+ 967 012d 13       		.uleb128 0x13
+ 968 012e 00       		.byte	0
+ 969 012f 00       		.byte	0
+ 970 0130 16       		.uleb128 0x16
+ 971 0131 05       		.uleb128 0x5
+ 972 0132 00       		.byte	0
+ 973 0133 49       		.uleb128 0x49
+ 974 0134 13       		.uleb128 0x13
+ 975 0135 00       		.byte	0
+ 976 0136 00       		.byte	0
+ 977 0137 17       		.uleb128 0x17
+ 978 0138 2E       		.uleb128 0x2e
+ 979 0139 00       		.byte	0
+ 980 013a 3F       		.uleb128 0x3f
+ 981 013b 19       		.uleb128 0x19
+ 982 013c 03       		.uleb128 0x3
+ 983 013d 0E       		.uleb128 0xe
+ 984 013e 3A       		.uleb128 0x3a
+ 985 013f 0B       		.uleb128 0xb
+ 986 0140 3B       		.uleb128 0x3b
+ 987 0141 0B       		.uleb128 0xb
+ 988 0142 27       		.uleb128 0x27
+ 989 0143 19       		.uleb128 0x19
+ 990 0144 49       		.uleb128 0x49
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 20
+
+
+ 991 0145 13       		.uleb128 0x13
+ 992 0146 3C       		.uleb128 0x3c
+ 993 0147 19       		.uleb128 0x19
+ 994 0148 00       		.byte	0
+ 995 0149 00       		.byte	0
+ 996 014a 18       		.uleb128 0x18
+ 997 014b 2E       		.uleb128 0x2e
+ 998 014c 01       		.byte	0x1
+ 999 014d 3F       		.uleb128 0x3f
+ 1000 014e 19       		.uleb128 0x19
+ 1001 014f 03       		.uleb128 0x3
+ 1002 0150 0E       		.uleb128 0xe
+ 1003 0151 3A       		.uleb128 0x3a
+ 1004 0152 0B       		.uleb128 0xb
+ 1005 0153 3B       		.uleb128 0x3b
+ 1006 0154 0B       		.uleb128 0xb
+ 1007 0155 27       		.uleb128 0x27
+ 1008 0156 19       		.uleb128 0x19
+ 1009 0157 3C       		.uleb128 0x3c
+ 1010 0158 19       		.uleb128 0x19
+ 1011 0159 01       		.uleb128 0x1
+ 1012 015a 13       		.uleb128 0x13
+ 1013 015b 00       		.byte	0
+ 1014 015c 00       		.byte	0
+ 1015 015d 19       		.uleb128 0x19
+ 1016 015e 2E       		.uleb128 0x2e
+ 1017 015f 01       		.byte	0x1
+ 1018 0160 3F       		.uleb128 0x3f
+ 1019 0161 19       		.uleb128 0x19
+ 1020 0162 03       		.uleb128 0x3
+ 1021 0163 0E       		.uleb128 0xe
+ 1022 0164 3A       		.uleb128 0x3a
+ 1023 0165 0B       		.uleb128 0xb
+ 1024 0166 3B       		.uleb128 0x3b
+ 1025 0167 0B       		.uleb128 0xb
+ 1026 0168 6E       		.uleb128 0x6e
+ 1027 0169 0E       		.uleb128 0xe
+ 1028 016a 27       		.uleb128 0x27
+ 1029 016b 19       		.uleb128 0x19
+ 1030 016c 49       		.uleb128 0x49
+ 1031 016d 13       		.uleb128 0x13
+ 1032 016e 3C       		.uleb128 0x3c
+ 1033 016f 19       		.uleb128 0x19
+ 1034 0170 01       		.uleb128 0x1
+ 1035 0171 13       		.uleb128 0x13
+ 1036 0172 00       		.byte	0
+ 1037 0173 00       		.byte	0
+ 1038 0174 1A       		.uleb128 0x1a
+ 1039 0175 2E       		.uleb128 0x2e
+ 1040 0176 01       		.byte	0x1
+ 1041 0177 3F       		.uleb128 0x3f
+ 1042 0178 19       		.uleb128 0x19
+ 1043 0179 03       		.uleb128 0x3
+ 1044 017a 0E       		.uleb128 0xe
+ 1045 017b 3A       		.uleb128 0x3a
+ 1046 017c 0B       		.uleb128 0xb
+ 1047 017d 3B       		.uleb128 0x3b
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 21
+
+
+ 1048 017e 0B       		.uleb128 0xb
+ 1049 017f 27       		.uleb128 0x27
+ 1050 0180 19       		.uleb128 0x19
+ 1051 0181 49       		.uleb128 0x49
+ 1052 0182 13       		.uleb128 0x13
+ 1053 0183 3C       		.uleb128 0x3c
+ 1054 0184 19       		.uleb128 0x19
+ 1055 0185 00       		.byte	0
+ 1056 0186 00       		.byte	0
+ 1057 0187 1B       		.uleb128 0x1b
+ 1058 0188 18       		.uleb128 0x18
+ 1059 0189 00       		.byte	0
+ 1060 018a 00       		.byte	0
+ 1061 018b 00       		.byte	0
+ 1062 018c 00       		.byte	0
+ 1063              		.section	.debug_loc,"",%progbits
+ 1064              	.Ldebug_loc0:
+ 1065              	.LLST0:
+ 1066 0000 00000000 		.4byte	.LVL0
+ 1067 0004 05000000 		.4byte	.LVL1-1
+ 1068 0008 0100     		.2byte	0x1
+ 1069 000a 50       		.byte	0x50
+ 1070 000b 05000000 		.4byte	.LVL1-1
+ 1071 000f 2C000000 		.4byte	.LFE63
+ 1072 0013 0400     		.2byte	0x4
+ 1073 0015 F3       		.byte	0xf3
+ 1074 0016 01       		.uleb128 0x1
+ 1075 0017 50       		.byte	0x50
+ 1076 0018 9F       		.byte	0x9f
+ 1077 0019 00000000 		.4byte	0
+ 1078 001d 00000000 		.4byte	0
+ 1079              	.LLST1:
+ 1080 0021 02000000 		.4byte	.LVL5
+ 1081 0025 16000000 		.4byte	.LVL9
+ 1082 0029 0200     		.2byte	0x2
+ 1083 002b 30       		.byte	0x30
+ 1084 002c 9F       		.byte	0x9f
+ 1085 002d 16000000 		.4byte	.LVL9
+ 1086 0031 D8000000 		.4byte	.LVL44
+ 1087 0035 0100     		.2byte	0x1
+ 1088 0037 56       		.byte	0x56
+ 1089 0038 00000000 		.4byte	0
+ 1090 003c 00000000 		.4byte	0
+ 1091              	.LLST2:
+ 1092 0040 02000000 		.4byte	.LVL5
+ 1093 0044 1C000000 		.4byte	.LVL11
+ 1094 0048 0600     		.2byte	0x6
+ 1095 004a 9E       		.byte	0x9e
+ 1096 004b 04       		.uleb128 0x4
+ 1097 004c 00000000 		.4byte	0
+ 1098 0050 1C000000 		.4byte	.LVL11
+ 1099 0054 21000000 		.4byte	.LVL12-1
+ 1100 0058 0100     		.2byte	0x1
+ 1101 005a 50       		.byte	0x50
+ 1102 005b 21000000 		.4byte	.LVL12-1
+ 1103 005f D8000000 		.4byte	.LVL44
+ 1104 0063 0100     		.2byte	0x1
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 22
+
+
+ 1105 0065 54       		.byte	0x54
+ 1106 0066 00000000 		.4byte	0
+ 1107 006a 00000000 		.4byte	0
+ 1108              	.LLST3:
+ 1109 006e 26000000 		.4byte	.LVL13
+ 1110 0072 3A000000 		.4byte	.LVL17
+ 1111 0076 0100     		.2byte	0x1
+ 1112 0078 55       		.byte	0x55
+ 1113 0079 3C000000 		.4byte	.LVL18
+ 1114 007d 42000000 		.4byte	.LVL19
+ 1115 0081 0100     		.2byte	0x1
+ 1116 0083 55       		.byte	0x55
+ 1117 0084 58000000 		.4byte	.LVL22
+ 1118 0088 6C000000 		.4byte	.LVL26
+ 1119 008c 0100     		.2byte	0x1
+ 1120 008e 55       		.byte	0x55
+ 1121 008f 6E000000 		.4byte	.LVL27
+ 1122 0093 74000000 		.4byte	.LVL28
+ 1123 0097 0100     		.2byte	0x1
+ 1124 0099 55       		.byte	0x55
+ 1125 009a 92000000 		.4byte	.LVL32
+ 1126 009e A6000000 		.4byte	.LVL36
+ 1127 00a2 0100     		.2byte	0x1
+ 1128 00a4 55       		.byte	0x55
+ 1129 00a5 A8000000 		.4byte	.LVL37
+ 1130 00a9 AE000000 		.4byte	.LVL38
+ 1131 00ad 0100     		.2byte	0x1
+ 1132 00af 55       		.byte	0x55
+ 1133 00b0 C6000000 		.4byte	.LVL42
+ 1134 00b4 D8000000 		.4byte	.LVL44
+ 1135 00b8 0100     		.2byte	0x1
+ 1136 00ba 55       		.byte	0x55
+ 1137 00bb 00000000 		.4byte	0
+ 1138 00bf 00000000 		.4byte	0
+ 1139              		.section	.debug_aranges,"",%progbits
+ 1140 0000 24000000 		.4byte	0x24
+ 1141 0004 0200     		.2byte	0x2
+ 1142 0006 00000000 		.4byte	.Ldebug_info0
+ 1143 000a 04       		.byte	0x4
+ 1144 000b 00       		.byte	0
+ 1145 000c 0000     		.2byte	0
+ 1146 000e 0000     		.2byte	0
+ 1147 0010 00000000 		.4byte	.LFB63
+ 1148 0014 2C000000 		.4byte	.LFE63-.LFB63
+ 1149 0018 00000000 		.4byte	.LFB64
+ 1150 001c 00010000 		.4byte	.LFE64-.LFB64
+ 1151 0020 00000000 		.4byte	0
+ 1152 0024 00000000 		.4byte	0
+ 1153              		.section	.debug_ranges,"",%progbits
+ 1154              	.Ldebug_ranges0:
+ 1155 0000 00000000 		.4byte	.LFB63
+ 1156 0004 2C000000 		.4byte	.LFE63
+ 1157 0008 00000000 		.4byte	.LFB64
+ 1158 000c 00010000 		.4byte	.LFE64
+ 1159 0010 00000000 		.4byte	0
+ 1160 0014 00000000 		.4byte	0
+ 1161              		.section	.debug_line,"",%progbits
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 23
+
+
+ 1162              	.Ldebug_line0:
+ 1163 0000 1F020000 		.section	.debug_str,"MS",%progbits,1
+ 1163      02008A01 
+ 1163      00000201 
+ 1163      FB0E0D00 
+ 1163      01010101 
+ 1164              	.LASF27:
+ 1165 0000 566F6C74 		.ascii	"Voltage_Management.c\000"
+ 1165      6167655F 
+ 1165      4D616E61 
+ 1165      67656D65 
+ 1165      6E742E63 
+ 1166              	.LASF9:
+ 1167 0015 5F5F696E 		.ascii	"__int32_t\000"
+ 1167      7433325F 
+ 1167      7400
+ 1168              	.LASF29:
+ 1169 001f 4144435F 		.ascii	"ADC_result_to_volts\000"
+ 1169      72657375 
+ 1169      6C745F74 
+ 1169      6F5F766F 
+ 1169      6C747300 
+ 1170              	.LASF10:
+ 1171 0033 696E7433 		.ascii	"int32_t\000"
+ 1171      325F7400 
+ 1172              	.LASF14:
+ 1173 003b 666C6F61 		.ascii	"float\000"
+ 1173      7400
+ 1174              	.LASF24:
+ 1175 0041 5F5F6275 		.ascii	"__builtin_puts\000"
+ 1175      696C7469 
+ 1175      6E5F7075 
+ 1175      747300
+ 1176              	.LASF1:
+ 1177 0050 756E7369 		.ascii	"unsigned char\000"
+ 1177      676E6564 
+ 1177      20636861 
+ 1177      7200
+ 1178              	.LASF13:
+ 1179 005e 696E7431 		.ascii	"int16\000"
+ 1179      3600
+ 1180              	.LASF5:
+ 1181 0064 6C6F6E67 		.ascii	"long unsigned int\000"
+ 1181      20756E73 
+ 1181      69676E65 
+ 1181      6420696E 
+ 1181      7400
+ 1182              	.LASF3:
+ 1183 0076 73686F72 		.ascii	"short unsigned int\000"
+ 1183      7420756E 
+ 1183      7369676E 
+ 1183      65642069 
+ 1183      6E7400
+ 1184              	.LASF23:
+ 1185 0089 4D656173 		.ascii	"Measure_Voltage\000"
+ 1185      7572655F 
+ 1185      566F6C74 
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 24
+
+
+ 1185      61676500 
+ 1186              	.LASF30:
+ 1187 0099 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 1187      52784275 
+ 1187      66666572 
+ 1187      00
+ 1188              	.LASF15:
+ 1189 00a6 646F7562 		.ascii	"double\000"
+ 1189      6C6500
+ 1190              	.LASF28:
+ 1191 00ad 433A5C55 		.ascii	"C:\\Users\\Ville L\\Desktop\\Zumo_Robotti\\Zumo_Rob"
+ 1191      73657273 
+ 1191      5C56696C 
+ 1191      6C65204C 
+ 1191      5C446573 
+ 1192 00db 6F747469 		.ascii	"otti\\ZumoBot.cydsn\000"
+ 1192      5C5A756D 
+ 1192      6F426F74 
+ 1192      2E637964 
+ 1192      736E00
+ 1193              	.LASF12:
+ 1194 00ee 75696E74 		.ascii	"uint32\000"
+ 1194      333200
+ 1195              	.LASF26:
+ 1196 00f5 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 1196      4320342E 
+ 1196      392E3320 
+ 1196      32303135 
+ 1196      30333033 
+ 1197 0128 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 1197      20726576 
+ 1197      6973696F 
+ 1197      6E203232 
+ 1197      31323230 
+ 1198 015b 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 1198      66756E63 
+ 1198      74696F6E 
+ 1198      2D736563 
+ 1198      74696F6E 
+ 1199              	.LASF8:
+ 1200 0183 756E7369 		.ascii	"unsigned int\000"
+ 1200      676E6564 
+ 1200      20696E74 
+ 1200      00
+ 1201              	.LASF33:
+ 1202 0190 4144435F 		.ascii	"ADC_Battery_GetResult16\000"
+ 1202      42617474 
+ 1202      6572795F 
+ 1202      47657452 
+ 1202      6573756C 
+ 1203              	.LASF7:
+ 1204 01a8 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 1204      206C6F6E 
+ 1204      6720756E 
+ 1204      7369676E 
+ 1204      65642069 
+ 1205              	.LASF21:
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 25
+
+
+ 1206 01bf 42656570 		.ascii	"Beep\000"
+ 1206      00
+ 1207              	.LASF19:
+ 1208 01c4 766F6C74 		.ascii	"volts\000"
+ 1208      7300
+ 1209              	.LASF18:
+ 1210 01ca 6C6F6E67 		.ascii	"long double\000"
+ 1210      20646F75 
+ 1210      626C6500 
+ 1211              	.LASF17:
+ 1212 01d6 73697A65 		.ascii	"sizetype\000"
+ 1212      74797065 
+ 1212      00
+ 1213              	.LASF6:
+ 1214 01df 6C6F6E67 		.ascii	"long long int\000"
+ 1214      206C6F6E 
+ 1214      6720696E 
+ 1214      7400
+ 1215              	.LASF16:
+ 1216 01ed 63686172 		.ascii	"char\000"
+ 1216      00
+ 1217              	.LASF20:
+ 1218 01f2 61646372 		.ascii	"adcresult\000"
+ 1218      6573756C 
+ 1218      7400
+ 1219              	.LASF25:
+ 1220 01fc 7072696E 		.ascii	"printf\000"
+ 1220      746600
+ 1221              	.LASF32:
+ 1222 0203 4144435F 		.ascii	"ADC_Battery_IsEndConversion\000"
+ 1222      42617474 
+ 1222      6572795F 
+ 1222      4973456E 
+ 1222      64436F6E 
+ 1223              	.LASF2:
+ 1224 021f 73686F72 		.ascii	"short int\000"
+ 1224      7420696E 
+ 1224      7400
+ 1225              	.LASF11:
+ 1226 0229 75696E74 		.ascii	"uint8\000"
+ 1226      3800
+ 1227              	.LASF4:
+ 1228 022f 6C6F6E67 		.ascii	"long int\000"
+ 1228      20696E74 
+ 1228      00
+ 1229              	.LASF34:
+ 1230 0238 70757473 		.ascii	"puts\000"
+ 1230      00
+ 1231              	.LASF0:
+ 1232 023d 7369676E 		.ascii	"signed char\000"
+ 1232      65642063 
+ 1232      68617200 
+ 1233              	.LASF31:
+ 1234 0249 4144435F 		.ascii	"ADC_Battery_StartConvert\000"
+ 1234      42617474 
+ 1234      6572795F 
+ 1234      53746172 
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGbdZPX.s 			page 26
+
+
+ 1234      74436F6E 
+ 1235              	.LASF22:
+ 1236 0262 43794465 		.ascii	"CyDelay\000"
+ 1236      6C617900 
+ 1237              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

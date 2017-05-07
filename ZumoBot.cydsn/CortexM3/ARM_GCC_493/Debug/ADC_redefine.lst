@@ -1,0 +1,560 @@
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"ADC_redefine.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.global	__aeabi_i2d
+  19              		.global	__aeabi_ddiv
+  20              		.global	__aeabi_dmul
+  21              		.global	__aeabi_d2f
+  22              		.section	.text.ADC_result_to_volts,"ax",%progbits
+  23              		.align	2
+  24              		.global	ADC_result_to_volts
+  25              		.thumb
+  26              		.thumb_func
+  27              		.type	ADC_result_to_volts, %function
+  28              	ADC_result_to_volts:
+  29              	.LFB63:
+  30              		.file 1 "ADC_redefine.c"
+   1:ADC_redefine.c **** 
+   2:ADC_redefine.c **** #include <project.h>
+   3:ADC_redefine.c **** #include <stdio.h>
+   4:ADC_redefine.c **** #include "Motor.h"
+   5:ADC_redefine.c **** #include "Ultra.h"
+   6:ADC_redefine.c **** #include "Nunchuk.h"
+   7:ADC_redefine.c **** #include "Reflectance.h"
+   8:ADC_redefine.c **** #include "I2C_made.h"
+   9:ADC_redefine.c **** #include "Gyro.h"
+  10:ADC_redefine.c **** #include "Accel_magnet.h"
+  11:ADC_redefine.c **** #include "IR.h"
+  12:ADC_redefine.c **** #include "Ambient.h"
+  13:ADC_redefine.c **** #include "Beep.h"
+  14:ADC_redefine.c **** 
+  15:ADC_redefine.c **** float ADC_result_to_volts(int16 adcresult);
+  16:ADC_redefine.c **** 
+  17:ADC_redefine.c **** float ADC_result_to_volts(int16 adcresult)
+  18:ADC_redefine.c **** {
+  31              		.loc 1 18 0
+  32              		.cfi_startproc
+  33              		@ args = 0, pretend = 0, frame = 0
+  34              		@ frame_needed = 0, uses_anonymous_args = 0
+  35              	.LVL0:
+  36 0000 08B5     		push	{r3, lr}
+  37              		.cfi_def_cfa_offset 8
+  38              		.cfi_offset 3, -8
+  39              		.cfi_offset 14, -4
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 2
+
+
+  19:ADC_redefine.c ****     float volts;
+  20:ADC_redefine.c ****     
+  21:ADC_redefine.c ****     volts = (adcresult / 4095.0) * (1.5 * 5.0);
+  40              		.loc 1 21 0
+  41 0002 FFF7FEFF 		bl	__aeabi_i2d
+  42              	.LVL1:
+  43 0006 06A3     		adr	r3, .L3
+  44 0008 D3E90023 		ldrd	r2, [r3]
+  45 000c FFF7FEFF 		bl	__aeabi_ddiv
+  46              	.LVL2:
+  47 0010 0022     		movs	r2, #0
+  48 0012 054B     		ldr	r3, .L3+8
+  49 0014 FFF7FEFF 		bl	__aeabi_dmul
+  50              	.LVL3:
+  51 0018 FFF7FEFF 		bl	__aeabi_d2f
+  52              	.LVL4:
+  22:ADC_redefine.c ****     // printf("using custom func!\n");
+  23:ADC_redefine.c ****     
+  24:ADC_redefine.c ****     return volts;
+  25:ADC_redefine.c ****     
+  26:ADC_redefine.c **** }
+  53              		.loc 1 26 0
+  54 001c 08BD     		pop	{r3, pc}
+  55              	.L4:
+  56 001e 00BF     		.align	3
+  57              	.L3:
+  58 0020 00000000 		.word	0
+  59 0024 00FEAF40 		.word	1085275648
+  60 0028 00001E40 		.word	1075707904
+  61              		.cfi_endproc
+  62              	.LFE63:
+  63              		.size	ADC_result_to_volts, .-ADC_result_to_volts
+  64 002c AFF30080 		.text
+  65              	.Letext0:
+  66              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  67              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  68              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+  69              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+  70              		.section	.debug_info,"",%progbits
+  71              	.Ldebug_info0:
+  72 0000 F4000000 		.4byte	0xf4
+  73 0004 0400     		.2byte	0x4
+  74 0006 00000000 		.4byte	.Ldebug_abbrev0
+  75 000a 04       		.byte	0x4
+  76 000b 01       		.uleb128 0x1
+  77 000c 9E000000 		.4byte	.LASF17
+  78 0010 01       		.byte	0x1
+  79 0011 45010000 		.4byte	.LASF18
+  80 0015 38000000 		.4byte	.LASF19
+  81 0019 00000000 		.4byte	.Ldebug_ranges0+0
+  82 001d 00000000 		.4byte	0
+  83 0021 00000000 		.4byte	.Ldebug_line0
+  84 0025 02       		.uleb128 0x2
+  85 0026 01       		.byte	0x1
+  86 0027 06       		.byte	0x6
+  87 0028 71010000 		.4byte	.LASF0
+  88 002c 02       		.uleb128 0x2
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 3
+
+
+  89 002d 01       		.byte	0x1
+  90 002e 08       		.byte	0x8
+  91 002f 2C010000 		.4byte	.LASF1
+  92 0033 02       		.uleb128 0x2
+  93 0034 02       		.byte	0x2
+  94 0035 05       		.byte	0x5
+  95 0036 9F010000 		.4byte	.LASF2
+  96 003a 02       		.uleb128 0x2
+  97 003b 02       		.byte	0x2
+  98 003c 07       		.byte	0x7
+  99 003d 0E000000 		.4byte	.LASF3
+ 100 0041 03       		.uleb128 0x3
+ 101 0042 89010000 		.4byte	.LASF9
+ 102 0046 02       		.byte	0x2
+ 103 0047 3F       		.byte	0x3f
+ 104 0048 4C000000 		.4byte	0x4c
+ 105 004c 02       		.uleb128 0x2
+ 106 004d 04       		.byte	0x4
+ 107 004e 05       		.byte	0x5
+ 108 004f 5B010000 		.4byte	.LASF4
+ 109 0053 02       		.uleb128 0x2
+ 110 0054 04       		.byte	0x4
+ 111 0055 07       		.byte	0x7
+ 112 0056 75000000 		.4byte	.LASF5
+ 113 005a 02       		.uleb128 0x2
+ 114 005b 08       		.byte	0x8
+ 115 005c 05       		.byte	0x5
+ 116 005d 00000000 		.4byte	.LASF6
+ 117 0061 02       		.uleb128 0x2
+ 118 0062 08       		.byte	0x8
+ 119 0063 07       		.byte	0x7
+ 120 0064 87000000 		.4byte	.LASF7
+ 121 0068 04       		.uleb128 0x4
+ 122 0069 04       		.byte	0x4
+ 123 006a 05       		.byte	0x5
+ 124 006b 696E7400 		.ascii	"int\000"
+ 125 006f 02       		.uleb128 0x2
+ 126 0070 04       		.byte	0x4
+ 127 0071 07       		.byte	0x7
+ 128 0072 2B000000 		.4byte	.LASF8
+ 129 0076 03       		.uleb128 0x3
+ 130 0077 A9010000 		.4byte	.LASF10
+ 131 007b 03       		.byte	0x3
+ 132 007c 2C       		.byte	0x2c
+ 133 007d 41000000 		.4byte	0x41
+ 134 0081 05       		.uleb128 0x5
+ 135 0082 99010000 		.4byte	.LASF11
+ 136 0086 04       		.byte	0x4
+ 137 0087 9601     		.2byte	0x196
+ 138 0089 33000000 		.4byte	0x33
+ 139 008d 02       		.uleb128 0x2
+ 140 008e 04       		.byte	0x4
+ 141 008f 04       		.byte	0x4
+ 142 0090 93010000 		.4byte	.LASF12
+ 143 0094 02       		.uleb128 0x2
+ 144 0095 08       		.byte	0x8
+ 145 0096 04       		.byte	0x4
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 4
+
+
+ 146 0097 54010000 		.4byte	.LASF13
+ 147 009b 02       		.uleb128 0x2
+ 148 009c 01       		.byte	0x1
+ 149 009d 08       		.byte	0x8
+ 150 009e 3A010000 		.4byte	.LASF14
+ 151 00a2 02       		.uleb128 0x2
+ 152 00a3 04       		.byte	0x4
+ 153 00a4 07       		.byte	0x7
+ 154 00a5 B1010000 		.4byte	.LASF15
+ 155 00a9 02       		.uleb128 0x2
+ 156 00aa 08       		.byte	0x8
+ 157 00ab 04       		.byte	0x4
+ 158 00ac 7D010000 		.4byte	.LASF16
+ 159 00b0 06       		.uleb128 0x6
+ 160 00b1 BA010000 		.4byte	.LASF20
+ 161 00b5 01       		.byte	0x1
+ 162 00b6 11       		.byte	0x11
+ 163 00b7 8D000000 		.4byte	0x8d
+ 164 00bb 00000000 		.4byte	.LFB63
+ 165 00bf 2C000000 		.4byte	.LFE63-.LFB63
+ 166 00c3 01       		.uleb128 0x1
+ 167 00c4 9C       		.byte	0x9c
+ 168 00c5 E6000000 		.4byte	0xe6
+ 169 00c9 07       		.uleb128 0x7
+ 170 00ca 21000000 		.4byte	.LASF21
+ 171 00ce 01       		.byte	0x1
+ 172 00cf 11       		.byte	0x11
+ 173 00d0 81000000 		.4byte	0x81
+ 174 00d4 00000000 		.4byte	.LLST0
+ 175 00d8 08       		.uleb128 0x8
+ 176 00d9 3F010000 		.4byte	.LASF22
+ 177 00dd 01       		.byte	0x1
+ 178 00de 13       		.byte	0x13
+ 179 00df 8D000000 		.4byte	0x8d
+ 180 00e3 01       		.uleb128 0x1
+ 181 00e4 50       		.byte	0x50
+ 182 00e5 00       		.byte	0
+ 183 00e6 09       		.uleb128 0x9
+ 184 00e7 64010000 		.4byte	.LASF23
+ 185 00eb 05       		.byte	0x5
+ 186 00ec 9606     		.2byte	0x696
+ 187 00ee F2000000 		.4byte	0xf2
+ 188 00f2 0A       		.uleb128 0xa
+ 189 00f3 76000000 		.4byte	0x76
+ 190 00f7 00       		.byte	0
+ 191              		.section	.debug_abbrev,"",%progbits
+ 192              	.Ldebug_abbrev0:
+ 193 0000 01       		.uleb128 0x1
+ 194 0001 11       		.uleb128 0x11
+ 195 0002 01       		.byte	0x1
+ 196 0003 25       		.uleb128 0x25
+ 197 0004 0E       		.uleb128 0xe
+ 198 0005 13       		.uleb128 0x13
+ 199 0006 0B       		.uleb128 0xb
+ 200 0007 03       		.uleb128 0x3
+ 201 0008 0E       		.uleb128 0xe
+ 202 0009 1B       		.uleb128 0x1b
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 5
+
+
+ 203 000a 0E       		.uleb128 0xe
+ 204 000b 55       		.uleb128 0x55
+ 205 000c 17       		.uleb128 0x17
+ 206 000d 11       		.uleb128 0x11
+ 207 000e 01       		.uleb128 0x1
+ 208 000f 10       		.uleb128 0x10
+ 209 0010 17       		.uleb128 0x17
+ 210 0011 00       		.byte	0
+ 211 0012 00       		.byte	0
+ 212 0013 02       		.uleb128 0x2
+ 213 0014 24       		.uleb128 0x24
+ 214 0015 00       		.byte	0
+ 215 0016 0B       		.uleb128 0xb
+ 216 0017 0B       		.uleb128 0xb
+ 217 0018 3E       		.uleb128 0x3e
+ 218 0019 0B       		.uleb128 0xb
+ 219 001a 03       		.uleb128 0x3
+ 220 001b 0E       		.uleb128 0xe
+ 221 001c 00       		.byte	0
+ 222 001d 00       		.byte	0
+ 223 001e 03       		.uleb128 0x3
+ 224 001f 16       		.uleb128 0x16
+ 225 0020 00       		.byte	0
+ 226 0021 03       		.uleb128 0x3
+ 227 0022 0E       		.uleb128 0xe
+ 228 0023 3A       		.uleb128 0x3a
+ 229 0024 0B       		.uleb128 0xb
+ 230 0025 3B       		.uleb128 0x3b
+ 231 0026 0B       		.uleb128 0xb
+ 232 0027 49       		.uleb128 0x49
+ 233 0028 13       		.uleb128 0x13
+ 234 0029 00       		.byte	0
+ 235 002a 00       		.byte	0
+ 236 002b 04       		.uleb128 0x4
+ 237 002c 24       		.uleb128 0x24
+ 238 002d 00       		.byte	0
+ 239 002e 0B       		.uleb128 0xb
+ 240 002f 0B       		.uleb128 0xb
+ 241 0030 3E       		.uleb128 0x3e
+ 242 0031 0B       		.uleb128 0xb
+ 243 0032 03       		.uleb128 0x3
+ 244 0033 08       		.uleb128 0x8
+ 245 0034 00       		.byte	0
+ 246 0035 00       		.byte	0
+ 247 0036 05       		.uleb128 0x5
+ 248 0037 16       		.uleb128 0x16
+ 249 0038 00       		.byte	0
+ 250 0039 03       		.uleb128 0x3
+ 251 003a 0E       		.uleb128 0xe
+ 252 003b 3A       		.uleb128 0x3a
+ 253 003c 0B       		.uleb128 0xb
+ 254 003d 3B       		.uleb128 0x3b
+ 255 003e 05       		.uleb128 0x5
+ 256 003f 49       		.uleb128 0x49
+ 257 0040 13       		.uleb128 0x13
+ 258 0041 00       		.byte	0
+ 259 0042 00       		.byte	0
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 6
+
+
+ 260 0043 06       		.uleb128 0x6
+ 261 0044 2E       		.uleb128 0x2e
+ 262 0045 01       		.byte	0x1
+ 263 0046 3F       		.uleb128 0x3f
+ 264 0047 19       		.uleb128 0x19
+ 265 0048 03       		.uleb128 0x3
+ 266 0049 0E       		.uleb128 0xe
+ 267 004a 3A       		.uleb128 0x3a
+ 268 004b 0B       		.uleb128 0xb
+ 269 004c 3B       		.uleb128 0x3b
+ 270 004d 0B       		.uleb128 0xb
+ 271 004e 27       		.uleb128 0x27
+ 272 004f 19       		.uleb128 0x19
+ 273 0050 49       		.uleb128 0x49
+ 274 0051 13       		.uleb128 0x13
+ 275 0052 11       		.uleb128 0x11
+ 276 0053 01       		.uleb128 0x1
+ 277 0054 12       		.uleb128 0x12
+ 278 0055 06       		.uleb128 0x6
+ 279 0056 40       		.uleb128 0x40
+ 280 0057 18       		.uleb128 0x18
+ 281 0058 9642     		.uleb128 0x2116
+ 282 005a 19       		.uleb128 0x19
+ 283 005b 01       		.uleb128 0x1
+ 284 005c 13       		.uleb128 0x13
+ 285 005d 00       		.byte	0
+ 286 005e 00       		.byte	0
+ 287 005f 07       		.uleb128 0x7
+ 288 0060 05       		.uleb128 0x5
+ 289 0061 00       		.byte	0
+ 290 0062 03       		.uleb128 0x3
+ 291 0063 0E       		.uleb128 0xe
+ 292 0064 3A       		.uleb128 0x3a
+ 293 0065 0B       		.uleb128 0xb
+ 294 0066 3B       		.uleb128 0x3b
+ 295 0067 0B       		.uleb128 0xb
+ 296 0068 49       		.uleb128 0x49
+ 297 0069 13       		.uleb128 0x13
+ 298 006a 02       		.uleb128 0x2
+ 299 006b 17       		.uleb128 0x17
+ 300 006c 00       		.byte	0
+ 301 006d 00       		.byte	0
+ 302 006e 08       		.uleb128 0x8
+ 303 006f 34       		.uleb128 0x34
+ 304 0070 00       		.byte	0
+ 305 0071 03       		.uleb128 0x3
+ 306 0072 0E       		.uleb128 0xe
+ 307 0073 3A       		.uleb128 0x3a
+ 308 0074 0B       		.uleb128 0xb
+ 309 0075 3B       		.uleb128 0x3b
+ 310 0076 0B       		.uleb128 0xb
+ 311 0077 49       		.uleb128 0x49
+ 312 0078 13       		.uleb128 0x13
+ 313 0079 02       		.uleb128 0x2
+ 314 007a 18       		.uleb128 0x18
+ 315 007b 00       		.byte	0
+ 316 007c 00       		.byte	0
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 7
+
+
+ 317 007d 09       		.uleb128 0x9
+ 318 007e 34       		.uleb128 0x34
+ 319 007f 00       		.byte	0
+ 320 0080 03       		.uleb128 0x3
+ 321 0081 0E       		.uleb128 0xe
+ 322 0082 3A       		.uleb128 0x3a
+ 323 0083 0B       		.uleb128 0xb
+ 324 0084 3B       		.uleb128 0x3b
+ 325 0085 05       		.uleb128 0x5
+ 326 0086 49       		.uleb128 0x49
+ 327 0087 13       		.uleb128 0x13
+ 328 0088 3F       		.uleb128 0x3f
+ 329 0089 19       		.uleb128 0x19
+ 330 008a 3C       		.uleb128 0x3c
+ 331 008b 19       		.uleb128 0x19
+ 332 008c 00       		.byte	0
+ 333 008d 00       		.byte	0
+ 334 008e 0A       		.uleb128 0xa
+ 335 008f 35       		.uleb128 0x35
+ 336 0090 00       		.byte	0
+ 337 0091 49       		.uleb128 0x49
+ 338 0092 13       		.uleb128 0x13
+ 339 0093 00       		.byte	0
+ 340 0094 00       		.byte	0
+ 341 0095 00       		.byte	0
+ 342              		.section	.debug_loc,"",%progbits
+ 343              	.Ldebug_loc0:
+ 344              	.LLST0:
+ 345 0000 00000000 		.4byte	.LVL0
+ 346 0004 05000000 		.4byte	.LVL1-1
+ 347 0008 0100     		.2byte	0x1
+ 348 000a 50       		.byte	0x50
+ 349 000b 05000000 		.4byte	.LVL1-1
+ 350 000f 2C000000 		.4byte	.LFE63
+ 351 0013 0400     		.2byte	0x4
+ 352 0015 F3       		.byte	0xf3
+ 353 0016 01       		.uleb128 0x1
+ 354 0017 50       		.byte	0x50
+ 355 0018 9F       		.byte	0x9f
+ 356 0019 00000000 		.4byte	0
+ 357 001d 00000000 		.4byte	0
+ 358              		.section	.debug_aranges,"",%progbits
+ 359 0000 1C000000 		.4byte	0x1c
+ 360 0004 0200     		.2byte	0x2
+ 361 0006 00000000 		.4byte	.Ldebug_info0
+ 362 000a 04       		.byte	0x4
+ 363 000b 00       		.byte	0
+ 364 000c 0000     		.2byte	0
+ 365 000e 0000     		.2byte	0
+ 366 0010 00000000 		.4byte	.LFB63
+ 367 0014 2C000000 		.4byte	.LFE63-.LFB63
+ 368 0018 00000000 		.4byte	0
+ 369 001c 00000000 		.4byte	0
+ 370              		.section	.debug_ranges,"",%progbits
+ 371              	.Ldebug_ranges0:
+ 372 0000 00000000 		.4byte	.LFB63
+ 373 0004 2C000000 		.4byte	.LFE63
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 8
+
+
+ 374 0008 00000000 		.4byte	0
+ 375 000c 00000000 		.4byte	0
+ 376              		.section	.debug_line,"",%progbits
+ 377              	.Ldebug_line0:
+ 378 0000 66010000 		.section	.debug_str,"MS",%progbits,1
+ 378      02004F01 
+ 378      00000201 
+ 378      FB0E0D00 
+ 378      01010101 
+ 379              	.LASF6:
+ 380 0000 6C6F6E67 		.ascii	"long long int\000"
+ 380      206C6F6E 
+ 380      6720696E 
+ 380      7400
+ 381              	.LASF3:
+ 382 000e 73686F72 		.ascii	"short unsigned int\000"
+ 382      7420756E 
+ 382      7369676E 
+ 382      65642069 
+ 382      6E7400
+ 383              	.LASF21:
+ 384 0021 61646372 		.ascii	"adcresult\000"
+ 384      6573756C 
+ 384      7400
+ 385              	.LASF8:
+ 386 002b 756E7369 		.ascii	"unsigned int\000"
+ 386      676E6564 
+ 386      20696E74 
+ 386      00
+ 387              	.LASF19:
+ 388 0038 433A5C55 		.ascii	"C:\\Users\\Ville L\\Desktop\\Zumo.release04\\Zumo01"
+ 388      73657273 
+ 388      5C56696C 
+ 388      6C65204C 
+ 388      5C446573 
+ 389 0066 5C5A756D 		.ascii	"\\ZumoBot.cydsn\000"
+ 389      6F426F74 
+ 389      2E637964 
+ 389      736E00
+ 390              	.LASF5:
+ 391 0075 6C6F6E67 		.ascii	"long unsigned int\000"
+ 391      20756E73 
+ 391      69676E65 
+ 391      6420696E 
+ 391      7400
+ 392              	.LASF7:
+ 393 0087 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 393      206C6F6E 
+ 393      6720756E 
+ 393      7369676E 
+ 393      65642069 
+ 394              	.LASF17:
+ 395 009e 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 395      4320342E 
+ 395      392E3320 
+ 395      32303135 
+ 395      30333033 
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 9
+
+
+ 396 00d1 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 396      20726576 
+ 396      6973696F 
+ 396      6E203232 
+ 396      31323230 
+ 397 0104 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 397      66756E63 
+ 397      74696F6E 
+ 397      2D736563 
+ 397      74696F6E 
+ 398              	.LASF1:
+ 399 012c 756E7369 		.ascii	"unsigned char\000"
+ 399      676E6564 
+ 399      20636861 
+ 399      7200
+ 400              	.LASF14:
+ 401 013a 63686172 		.ascii	"char\000"
+ 401      00
+ 402              	.LASF22:
+ 403 013f 766F6C74 		.ascii	"volts\000"
+ 403      7300
+ 404              	.LASF18:
+ 405 0145 4144435F 		.ascii	"ADC_redefine.c\000"
+ 405      72656465 
+ 405      66696E65 
+ 405      2E6300
+ 406              	.LASF13:
+ 407 0154 646F7562 		.ascii	"double\000"
+ 407      6C6500
+ 408              	.LASF4:
+ 409 015b 6C6F6E67 		.ascii	"long int\000"
+ 409      20696E74 
+ 409      00
+ 410              	.LASF23:
+ 411 0164 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 411      52784275 
+ 411      66666572 
+ 411      00
+ 412              	.LASF0:
+ 413 0171 7369676E 		.ascii	"signed char\000"
+ 413      65642063 
+ 413      68617200 
+ 414              	.LASF16:
+ 415 017d 6C6F6E67 		.ascii	"long double\000"
+ 415      20646F75 
+ 415      626C6500 
+ 416              	.LASF9:
+ 417 0189 5F5F696E 		.ascii	"__int32_t\000"
+ 417      7433325F 
+ 417      7400
+ 418              	.LASF12:
+ 419 0193 666C6F61 		.ascii	"float\000"
+ 419      7400
+ 420              	.LASF11:
+ 421 0199 696E7431 		.ascii	"int16\000"
+ 421      3600
+ 422              	.LASF2:
+ARM GAS  C:\Users\VILLEL~1\AppData\Local\Temp\ccGAp70s.s 			page 10
+
+
+ 423 019f 73686F72 		.ascii	"short int\000"
+ 423      7420696E 
+ 423      7400
+ 424              	.LASF10:
+ 425 01a9 696E7433 		.ascii	"int32_t\000"
+ 425      325F7400 
+ 426              	.LASF15:
+ 427 01b1 73697A65 		.ascii	"sizetype\000"
+ 427      74797065 
+ 427      00
+ 428              	.LASF20:
+ 429 01ba 4144435F 		.ascii	"ADC_result_to_volts\000"
+ 429      72657375 
+ 429      6C745F74 
+ 429      6F5F766F 
+ 429      6C747300 
+ 430              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br

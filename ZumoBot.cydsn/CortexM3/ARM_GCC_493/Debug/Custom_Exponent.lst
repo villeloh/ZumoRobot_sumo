@@ -1,0 +1,631 @@
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.file	"Custom_Exponent.c"
+  15              		.text
+  16              	.Ltext0:
+  17              		.cfi_sections	.debug_frame
+  18              		.global	__aeabi_fcmplt
+  19              		.section	.text.Custom_exp,"ax",%progbits
+  20              		.align	2
+  21              		.global	Custom_exp
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	Custom_exp, %function
+  25              	Custom_exp:
+  26              	.LFB63:
+  27              		.file 1 "Custom_Exponent.c"
+   1:Custom_Exponent.c **** #include <project.h>
+   2:Custom_Exponent.c **** #include <stdio.h>
+   3:Custom_Exponent.c **** #include <math.h>
+   4:Custom_Exponent.c **** #include "Motor.h"
+   5:Custom_Exponent.c **** #include "Ultra.h"
+   6:Custom_Exponent.c **** #include "Nunchuk.h"
+   7:Custom_Exponent.c **** #include "Reflectance.h"
+   8:Custom_Exponent.c **** #include "I2C_made.h"
+   9:Custom_Exponent.c **** #include "Gyro.h"
+  10:Custom_Exponent.c **** #include "Accel_magnet.h"
+  11:Custom_Exponent.c **** #include "IR.h"
+  12:Custom_Exponent.c **** #include "Ambient.h"
+  13:Custom_Exponent.c **** #include "Beep.h"
+  14:Custom_Exponent.c **** 
+  15:Custom_Exponent.c **** float Custom_exp(float x, float y);
+  16:Custom_Exponent.c **** 
+  17:Custom_Exponent.c **** 
+  18:Custom_Exponent.c **** // Needed for dealing with negative values of blackDiff in main.c.
+  19:Custom_Exponent.c **** float Custom_exp(float x, float y)
+  20:Custom_Exponent.c **** { 
+  28              		.loc 1 20 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33 0000 38B5     		push	{r3, r4, r5, lr}
+  34              		.cfi_def_cfa_offset 16
+  35              		.cfi_offset 3, -16
+  36              		.cfi_offset 4, -12
+  37              		.cfi_offset 5, -8
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 2
+
+
+  38              		.cfi_offset 14, -4
+  39 0002 0546     		mov	r5, r0
+  40 0004 0C46     		mov	r4, r1
+  21:Custom_Exponent.c ****     if (x < 0)
+  41              		.loc 1 21 0
+  42 0006 0021     		movs	r1, #0
+  43              	.LVL1:
+  44 0008 FFF7FEFF 		bl	__aeabi_fcmplt
+  45              	.LVL2:
+  46 000c 30B1     		cbz	r0, .L6
+  22:Custom_Exponent.c ****     {
+  23:Custom_Exponent.c ****         return -1 * powf(x, y); // the sign of a negative blackDiff (-) is preserved when raised to
+  47              		.loc 1 23 0
+  48 000e 2846     		mov	r0, r5
+  49 0010 2146     		mov	r1, r4
+  50 0012 FFF7FEFF 		bl	powf
+  51              	.LVL3:
+  52 0016 00F10040 		add	r0, r0, #-2147483648
+  53 001a 38BD     		pop	{r3, r4, r5, pc}
+  54              	.LVL4:
+  55              	.L6:
+  24:Custom_Exponent.c **** 
+  25:Custom_Exponent.c ****     } else { return powf(x, y); }
+  56              		.loc 1 25 0
+  57 001c 2846     		mov	r0, r5
+  58 001e 2146     		mov	r1, r4
+  59 0020 FFF7FEFF 		bl	powf
+  60              	.LVL5:
+  26:Custom_Exponent.c **** 
+  27:Custom_Exponent.c **** }
+  61              		.loc 1 27 0
+  62 0024 38BD     		pop	{r3, r4, r5, pc}
+  63              		.cfi_endproc
+  64              	.LFE63:
+  65              		.size	Custom_exp, .-Custom_exp
+  66 0026 00BF     		.text
+  67              	.Letext0:
+  68              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  69              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  70              		.file 4 "Generated_Source\\PSoC5/core_cm3.h"
+  71              		.file 5 "c:\\program files (x86)\\cypress\\psoc creator\\4.0\\psoc creator\\import\\gnu\\arm\\4.9.
+  72              		.section	.debug_info,"",%progbits
+  73              	.Ldebug_info0:
+  74 0000 31010000 		.4byte	0x131
+  75 0004 0400     		.2byte	0x4
+  76 0006 00000000 		.4byte	.Ldebug_abbrev0
+  77 000a 04       		.byte	0x4
+  78 000b 01       		.uleb128 0x1
+  79 000c 69000000 		.4byte	.LASF16
+  80 0010 01       		.byte	0x1
+  81 0011 2E000000 		.4byte	.LASF17
+  82 0015 05010000 		.4byte	.LASF18
+  83 0019 00000000 		.4byte	.Ldebug_ranges0+0
+  84 001d 00000000 		.4byte	0
+  85 0021 00000000 		.4byte	.Ldebug_line0
+  86 0025 02       		.uleb128 0x2
+  87 0026 04       		.byte	0x4
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 3
+
+
+  88 0027 04       		.byte	0x4
+  89 0028 7E010000 		.4byte	.LASF0
+  90 002c 02       		.uleb128 0x2
+  91 002d 01       		.byte	0x1
+  92 002e 06       		.byte	0x6
+  93 002f 5C010000 		.4byte	.LASF1
+  94 0033 02       		.uleb128 0x2
+  95 0034 01       		.byte	0x1
+  96 0035 08       		.byte	0x8
+  97 0036 F7000000 		.4byte	.LASF2
+  98 003a 02       		.uleb128 0x2
+  99 003b 02       		.byte	0x2
+ 100 003c 05       		.byte	0x5
+ 101 003d 84010000 		.4byte	.LASF3
+ 102 0041 02       		.uleb128 0x2
+ 103 0042 02       		.byte	0x2
+ 104 0043 07       		.byte	0x7
+ 105 0044 0E000000 		.4byte	.LASF4
+ 106 0048 03       		.uleb128 0x3
+ 107 0049 74010000 		.4byte	.LASF10
+ 108 004d 02       		.byte	0x2
+ 109 004e 3F       		.byte	0x3f
+ 110 004f 53000000 		.4byte	0x53
+ 111 0053 02       		.uleb128 0x2
+ 112 0054 04       		.byte	0x4
+ 113 0055 05       		.byte	0x5
+ 114 0056 3A010000 		.4byte	.LASF5
+ 115 005a 02       		.uleb128 0x2
+ 116 005b 04       		.byte	0x4
+ 117 005c 07       		.byte	0x7
+ 118 005d 40000000 		.4byte	.LASF6
+ 119 0061 02       		.uleb128 0x2
+ 120 0062 08       		.byte	0x8
+ 121 0063 05       		.byte	0x5
+ 122 0064 00000000 		.4byte	.LASF7
+ 123 0068 02       		.uleb128 0x2
+ 124 0069 08       		.byte	0x8
+ 125 006a 07       		.byte	0x7
+ 126 006b 52000000 		.4byte	.LASF8
+ 127 006f 04       		.uleb128 0x4
+ 128 0070 04       		.byte	0x4
+ 129 0071 05       		.byte	0x5
+ 130 0072 696E7400 		.ascii	"int\000"
+ 131 0076 02       		.uleb128 0x2
+ 132 0077 04       		.byte	0x4
+ 133 0078 07       		.byte	0x7
+ 134 0079 21000000 		.4byte	.LASF9
+ 135 007d 03       		.uleb128 0x3
+ 136 007e 8E010000 		.4byte	.LASF11
+ 137 0082 03       		.byte	0x3
+ 138 0083 2C       		.byte	0x2c
+ 139 0084 48000000 		.4byte	0x48
+ 140 0088 02       		.uleb128 0x2
+ 141 0089 08       		.byte	0x8
+ 142 008a 04       		.byte	0x4
+ 143 008b 43010000 		.4byte	.LASF12
+ 144 008f 02       		.uleb128 0x2
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 4
+
+
+ 145 0090 01       		.byte	0x1
+ 146 0091 08       		.byte	0x8
+ 147 0092 35010000 		.4byte	.LASF13
+ 148 0096 02       		.uleb128 0x2
+ 149 0097 04       		.byte	0x4
+ 150 0098 07       		.byte	0x7
+ 151 0099 96010000 		.4byte	.LASF14
+ 152 009d 02       		.uleb128 0x2
+ 153 009e 08       		.byte	0x8
+ 154 009f 04       		.byte	0x4
+ 155 00a0 68010000 		.4byte	.LASF15
+ 156 00a4 05       		.uleb128 0x5
+ 157 00a5 9F010000 		.4byte	.LASF19
+ 158 00a9 01       		.byte	0x1
+ 159 00aa 13       		.byte	0x13
+ 160 00ab 25000000 		.4byte	0x25
+ 161 00af 00000000 		.4byte	.LFB63
+ 162 00b3 26000000 		.4byte	.LFE63-.LFB63
+ 163 00b7 01       		.uleb128 0x1
+ 164 00b8 9C       		.byte	0x9c
+ 165 00b9 0C010000 		.4byte	0x10c
+ 166 00bd 06       		.uleb128 0x6
+ 167 00be 7800     		.ascii	"x\000"
+ 168 00c0 01       		.byte	0x1
+ 169 00c1 13       		.byte	0x13
+ 170 00c2 25000000 		.4byte	0x25
+ 171 00c6 00000000 		.4byte	.LLST0
+ 172 00ca 06       		.uleb128 0x6
+ 173 00cb 7900     		.ascii	"y\000"
+ 174 00cd 01       		.byte	0x1
+ 175 00ce 13       		.byte	0x13
+ 176 00cf 25000000 		.4byte	0x25
+ 177 00d3 1E000000 		.4byte	.LLST1
+ 178 00d7 07       		.uleb128 0x7
+ 179 00d8 16000000 		.4byte	.LVL3
+ 180 00dc 1D010000 		.4byte	0x11d
+ 181 00e0 F3000000 		.4byte	0xf3
+ 182 00e4 08       		.uleb128 0x8
+ 183 00e5 01       		.uleb128 0x1
+ 184 00e6 51       		.byte	0x51
+ 185 00e7 03       		.uleb128 0x3
+ 186 00e8 F5       		.byte	0xf5
+ 187 00e9 04       		.uleb128 0x4
+ 188 00ea 25       		.uleb128 0x25
+ 189 00eb 08       		.uleb128 0x8
+ 190 00ec 01       		.uleb128 0x1
+ 191 00ed 50       		.byte	0x50
+ 192 00ee 03       		.uleb128 0x3
+ 193 00ef F5       		.byte	0xf5
+ 194 00f0 05       		.uleb128 0x5
+ 195 00f1 25       		.uleb128 0x25
+ 196 00f2 00       		.byte	0
+ 197 00f3 09       		.uleb128 0x9
+ 198 00f4 24000000 		.4byte	.LVL5
+ 199 00f8 1D010000 		.4byte	0x11d
+ 200 00fc 08       		.uleb128 0x8
+ 201 00fd 01       		.uleb128 0x1
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 5
+
+
+ 202 00fe 51       		.byte	0x51
+ 203 00ff 03       		.uleb128 0x3
+ 204 0100 F5       		.byte	0xf5
+ 205 0101 04       		.uleb128 0x4
+ 206 0102 25       		.uleb128 0x25
+ 207 0103 08       		.uleb128 0x8
+ 208 0104 01       		.uleb128 0x1
+ 209 0105 50       		.byte	0x50
+ 210 0106 03       		.uleb128 0x3
+ 211 0107 F5       		.byte	0xf5
+ 212 0108 05       		.uleb128 0x5
+ 213 0109 25       		.uleb128 0x25
+ 214 010a 00       		.byte	0
+ 215 010b 00       		.byte	0
+ 216 010c 0A       		.uleb128 0xa
+ 217 010d 4F010000 		.4byte	.LASF20
+ 218 0111 04       		.byte	0x4
+ 219 0112 9606     		.2byte	0x696
+ 220 0114 18010000 		.4byte	0x118
+ 221 0118 0B       		.uleb128 0xb
+ 222 0119 7D000000 		.4byte	0x7d
+ 223 011d 0C       		.uleb128 0xc
+ 224 011e 4A010000 		.4byte	.LASF21
+ 225 0122 05       		.byte	0x5
+ 226 0123 5301     		.2byte	0x153
+ 227 0125 25000000 		.4byte	0x25
+ 228 0129 0D       		.uleb128 0xd
+ 229 012a 25000000 		.4byte	0x25
+ 230 012e 0D       		.uleb128 0xd
+ 231 012f 25000000 		.4byte	0x25
+ 232 0133 00       		.byte	0
+ 233 0134 00       		.byte	0
+ 234              		.section	.debug_abbrev,"",%progbits
+ 235              	.Ldebug_abbrev0:
+ 236 0000 01       		.uleb128 0x1
+ 237 0001 11       		.uleb128 0x11
+ 238 0002 01       		.byte	0x1
+ 239 0003 25       		.uleb128 0x25
+ 240 0004 0E       		.uleb128 0xe
+ 241 0005 13       		.uleb128 0x13
+ 242 0006 0B       		.uleb128 0xb
+ 243 0007 03       		.uleb128 0x3
+ 244 0008 0E       		.uleb128 0xe
+ 245 0009 1B       		.uleb128 0x1b
+ 246 000a 0E       		.uleb128 0xe
+ 247 000b 55       		.uleb128 0x55
+ 248 000c 17       		.uleb128 0x17
+ 249 000d 11       		.uleb128 0x11
+ 250 000e 01       		.uleb128 0x1
+ 251 000f 10       		.uleb128 0x10
+ 252 0010 17       		.uleb128 0x17
+ 253 0011 00       		.byte	0
+ 254 0012 00       		.byte	0
+ 255 0013 02       		.uleb128 0x2
+ 256 0014 24       		.uleb128 0x24
+ 257 0015 00       		.byte	0
+ 258 0016 0B       		.uleb128 0xb
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 6
+
+
+ 259 0017 0B       		.uleb128 0xb
+ 260 0018 3E       		.uleb128 0x3e
+ 261 0019 0B       		.uleb128 0xb
+ 262 001a 03       		.uleb128 0x3
+ 263 001b 0E       		.uleb128 0xe
+ 264 001c 00       		.byte	0
+ 265 001d 00       		.byte	0
+ 266 001e 03       		.uleb128 0x3
+ 267 001f 16       		.uleb128 0x16
+ 268 0020 00       		.byte	0
+ 269 0021 03       		.uleb128 0x3
+ 270 0022 0E       		.uleb128 0xe
+ 271 0023 3A       		.uleb128 0x3a
+ 272 0024 0B       		.uleb128 0xb
+ 273 0025 3B       		.uleb128 0x3b
+ 274 0026 0B       		.uleb128 0xb
+ 275 0027 49       		.uleb128 0x49
+ 276 0028 13       		.uleb128 0x13
+ 277 0029 00       		.byte	0
+ 278 002a 00       		.byte	0
+ 279 002b 04       		.uleb128 0x4
+ 280 002c 24       		.uleb128 0x24
+ 281 002d 00       		.byte	0
+ 282 002e 0B       		.uleb128 0xb
+ 283 002f 0B       		.uleb128 0xb
+ 284 0030 3E       		.uleb128 0x3e
+ 285 0031 0B       		.uleb128 0xb
+ 286 0032 03       		.uleb128 0x3
+ 287 0033 08       		.uleb128 0x8
+ 288 0034 00       		.byte	0
+ 289 0035 00       		.byte	0
+ 290 0036 05       		.uleb128 0x5
+ 291 0037 2E       		.uleb128 0x2e
+ 292 0038 01       		.byte	0x1
+ 293 0039 3F       		.uleb128 0x3f
+ 294 003a 19       		.uleb128 0x19
+ 295 003b 03       		.uleb128 0x3
+ 296 003c 0E       		.uleb128 0xe
+ 297 003d 3A       		.uleb128 0x3a
+ 298 003e 0B       		.uleb128 0xb
+ 299 003f 3B       		.uleb128 0x3b
+ 300 0040 0B       		.uleb128 0xb
+ 301 0041 27       		.uleb128 0x27
+ 302 0042 19       		.uleb128 0x19
+ 303 0043 49       		.uleb128 0x49
+ 304 0044 13       		.uleb128 0x13
+ 305 0045 11       		.uleb128 0x11
+ 306 0046 01       		.uleb128 0x1
+ 307 0047 12       		.uleb128 0x12
+ 308 0048 06       		.uleb128 0x6
+ 309 0049 40       		.uleb128 0x40
+ 310 004a 18       		.uleb128 0x18
+ 311 004b 9642     		.uleb128 0x2116
+ 312 004d 19       		.uleb128 0x19
+ 313 004e 01       		.uleb128 0x1
+ 314 004f 13       		.uleb128 0x13
+ 315 0050 00       		.byte	0
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 7
+
+
+ 316 0051 00       		.byte	0
+ 317 0052 06       		.uleb128 0x6
+ 318 0053 05       		.uleb128 0x5
+ 319 0054 00       		.byte	0
+ 320 0055 03       		.uleb128 0x3
+ 321 0056 08       		.uleb128 0x8
+ 322 0057 3A       		.uleb128 0x3a
+ 323 0058 0B       		.uleb128 0xb
+ 324 0059 3B       		.uleb128 0x3b
+ 325 005a 0B       		.uleb128 0xb
+ 326 005b 49       		.uleb128 0x49
+ 327 005c 13       		.uleb128 0x13
+ 328 005d 02       		.uleb128 0x2
+ 329 005e 17       		.uleb128 0x17
+ 330 005f 00       		.byte	0
+ 331 0060 00       		.byte	0
+ 332 0061 07       		.uleb128 0x7
+ 333 0062 898201   		.uleb128 0x4109
+ 334 0065 01       		.byte	0x1
+ 335 0066 11       		.uleb128 0x11
+ 336 0067 01       		.uleb128 0x1
+ 337 0068 31       		.uleb128 0x31
+ 338 0069 13       		.uleb128 0x13
+ 339 006a 01       		.uleb128 0x1
+ 340 006b 13       		.uleb128 0x13
+ 341 006c 00       		.byte	0
+ 342 006d 00       		.byte	0
+ 343 006e 08       		.uleb128 0x8
+ 344 006f 8A8201   		.uleb128 0x410a
+ 345 0072 00       		.byte	0
+ 346 0073 02       		.uleb128 0x2
+ 347 0074 18       		.uleb128 0x18
+ 348 0075 9142     		.uleb128 0x2111
+ 349 0077 18       		.uleb128 0x18
+ 350 0078 00       		.byte	0
+ 351 0079 00       		.byte	0
+ 352 007a 09       		.uleb128 0x9
+ 353 007b 898201   		.uleb128 0x4109
+ 354 007e 01       		.byte	0x1
+ 355 007f 11       		.uleb128 0x11
+ 356 0080 01       		.uleb128 0x1
+ 357 0081 31       		.uleb128 0x31
+ 358 0082 13       		.uleb128 0x13
+ 359 0083 00       		.byte	0
+ 360 0084 00       		.byte	0
+ 361 0085 0A       		.uleb128 0xa
+ 362 0086 34       		.uleb128 0x34
+ 363 0087 00       		.byte	0
+ 364 0088 03       		.uleb128 0x3
+ 365 0089 0E       		.uleb128 0xe
+ 366 008a 3A       		.uleb128 0x3a
+ 367 008b 0B       		.uleb128 0xb
+ 368 008c 3B       		.uleb128 0x3b
+ 369 008d 05       		.uleb128 0x5
+ 370 008e 49       		.uleb128 0x49
+ 371 008f 13       		.uleb128 0x13
+ 372 0090 3F       		.uleb128 0x3f
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 8
+
+
+ 373 0091 19       		.uleb128 0x19
+ 374 0092 3C       		.uleb128 0x3c
+ 375 0093 19       		.uleb128 0x19
+ 376 0094 00       		.byte	0
+ 377 0095 00       		.byte	0
+ 378 0096 0B       		.uleb128 0xb
+ 379 0097 35       		.uleb128 0x35
+ 380 0098 00       		.byte	0
+ 381 0099 49       		.uleb128 0x49
+ 382 009a 13       		.uleb128 0x13
+ 383 009b 00       		.byte	0
+ 384 009c 00       		.byte	0
+ 385 009d 0C       		.uleb128 0xc
+ 386 009e 2E       		.uleb128 0x2e
+ 387 009f 01       		.byte	0x1
+ 388 00a0 3F       		.uleb128 0x3f
+ 389 00a1 19       		.uleb128 0x19
+ 390 00a2 03       		.uleb128 0x3
+ 391 00a3 0E       		.uleb128 0xe
+ 392 00a4 3A       		.uleb128 0x3a
+ 393 00a5 0B       		.uleb128 0xb
+ 394 00a6 3B       		.uleb128 0x3b
+ 395 00a7 05       		.uleb128 0x5
+ 396 00a8 27       		.uleb128 0x27
+ 397 00a9 19       		.uleb128 0x19
+ 398 00aa 49       		.uleb128 0x49
+ 399 00ab 13       		.uleb128 0x13
+ 400 00ac 3C       		.uleb128 0x3c
+ 401 00ad 19       		.uleb128 0x19
+ 402 00ae 00       		.byte	0
+ 403 00af 00       		.byte	0
+ 404 00b0 0D       		.uleb128 0xd
+ 405 00b1 05       		.uleb128 0x5
+ 406 00b2 00       		.byte	0
+ 407 00b3 49       		.uleb128 0x49
+ 408 00b4 13       		.uleb128 0x13
+ 409 00b5 00       		.byte	0
+ 410 00b6 00       		.byte	0
+ 411 00b7 00       		.byte	0
+ 412              		.section	.debug_loc,"",%progbits
+ 413              	.Ldebug_loc0:
+ 414              	.LLST0:
+ 415 0000 00000000 		.4byte	.LVL0
+ 416 0004 0B000000 		.4byte	.LVL2-1
+ 417 0008 0100     		.2byte	0x1
+ 418 000a 50       		.byte	0x50
+ 419 000b 0B000000 		.4byte	.LVL2-1
+ 420 000f 26000000 		.4byte	.LFE63
+ 421 0013 0100     		.2byte	0x1
+ 422 0015 55       		.byte	0x55
+ 423 0016 00000000 		.4byte	0
+ 424 001a 00000000 		.4byte	0
+ 425              	.LLST1:
+ 426 001e 00000000 		.4byte	.LVL0
+ 427 0022 08000000 		.4byte	.LVL1
+ 428 0026 0100     		.2byte	0x1
+ 429 0028 51       		.byte	0x51
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 9
+
+
+ 430 0029 08000000 		.4byte	.LVL1
+ 431 002d 26000000 		.4byte	.LFE63
+ 432 0031 0100     		.2byte	0x1
+ 433 0033 54       		.byte	0x54
+ 434 0034 00000000 		.4byte	0
+ 435 0038 00000000 		.4byte	0
+ 436              		.section	.debug_aranges,"",%progbits
+ 437 0000 1C000000 		.4byte	0x1c
+ 438 0004 0200     		.2byte	0x2
+ 439 0006 00000000 		.4byte	.Ldebug_info0
+ 440 000a 04       		.byte	0x4
+ 441 000b 00       		.byte	0
+ 442 000c 0000     		.2byte	0
+ 443 000e 0000     		.2byte	0
+ 444 0010 00000000 		.4byte	.LFB63
+ 445 0014 26000000 		.4byte	.LFE63-.LFB63
+ 446 0018 00000000 		.4byte	0
+ 447 001c 00000000 		.4byte	0
+ 448              		.section	.debug_ranges,"",%progbits
+ 449              	.Ldebug_ranges0:
+ 450 0000 00000000 		.4byte	.LFB63
+ 451 0004 26000000 		.4byte	.LFE63
+ 452 0008 00000000 		.4byte	0
+ 453 000c 00000000 		.4byte	0
+ 454              		.section	.debug_line,"",%progbits
+ 455              	.Ldebug_line0:
+ 456 0000 68010000 		.section	.debug_str,"MS",%progbits,1
+ 456      02004F01 
+ 456      00000201 
+ 456      FB0E0D00 
+ 456      01010101 
+ 457              	.LASF7:
+ 458 0000 6C6F6E67 		.ascii	"long long int\000"
+ 458      206C6F6E 
+ 458      6720696E 
+ 458      7400
+ 459              	.LASF4:
+ 460 000e 73686F72 		.ascii	"short unsigned int\000"
+ 460      7420756E 
+ 460      7369676E 
+ 460      65642069 
+ 460      6E7400
+ 461              	.LASF9:
+ 462 0021 756E7369 		.ascii	"unsigned int\000"
+ 462      676E6564 
+ 462      20696E74 
+ 462      00
+ 463              	.LASF17:
+ 464 002e 43757374 		.ascii	"Custom_Exponent.c\000"
+ 464      6F6D5F45 
+ 464      78706F6E 
+ 464      656E742E 
+ 464      6300
+ 465              	.LASF6:
+ 466 0040 6C6F6E67 		.ascii	"long unsigned int\000"
+ 466      20756E73 
+ 466      69676E65 
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 10
+
+
+ 466      6420696E 
+ 466      7400
+ 467              	.LASF8:
+ 468 0052 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 468      206C6F6E 
+ 468      6720756E 
+ 468      7369676E 
+ 468      65642069 
+ 469              	.LASF16:
+ 470 0069 474E5520 		.ascii	"GNU C 4.9.3 20150303 (release) [ARM/embedded-4_9-br"
+ 470      4320342E 
+ 470      392E3320 
+ 470      32303135 
+ 470      30333033 
+ 471 009c 616E6368 		.ascii	"anch revision 221220] -mcpu=cortex-m3 -mthumb -g -O"
+ 471      20726576 
+ 471      6973696F 
+ 471      6E203232 
+ 471      31323230 
+ 472 00cf 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 472      66756E63 
+ 472      74696F6E 
+ 472      2D736563 
+ 472      74696F6E 
+ 473              	.LASF2:
+ 474 00f7 756E7369 		.ascii	"unsigned char\000"
+ 474      676E6564 
+ 474      20636861 
+ 474      7200
+ 475              	.LASF18:
+ 476 0105 433A5C55 		.ascii	"C:\\Users\\Koo Moo\\Desktop\\ZumoRobo\\ZumoBot.cyds"
+ 476      73657273 
+ 476      5C4B6F6F 
+ 476      204D6F6F 
+ 476      5C446573 
+ 477 0133 6E00     		.ascii	"n\000"
+ 478              	.LASF13:
+ 479 0135 63686172 		.ascii	"char\000"
+ 479      00
+ 480              	.LASF5:
+ 481 013a 6C6F6E67 		.ascii	"long int\000"
+ 481      20696E74 
+ 481      00
+ 482              	.LASF12:
+ 483 0143 646F7562 		.ascii	"double\000"
+ 483      6C6500
+ 484              	.LASF21:
+ 485 014a 706F7766 		.ascii	"powf\000"
+ 485      00
+ 486              	.LASF20:
+ 487 014f 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 487      52784275 
+ 487      66666572 
+ 487      00
+ 488              	.LASF1:
+ 489 015c 7369676E 		.ascii	"signed char\000"
+ 489      65642063 
+ARM GAS  C:\Users\KOOMOO~1\AppData\Local\Temp\ccgnWu5Y.s 			page 11
+
+
+ 489      68617200 
+ 490              	.LASF15:
+ 491 0168 6C6F6E67 		.ascii	"long double\000"
+ 491      20646F75 
+ 491      626C6500 
+ 492              	.LASF10:
+ 493 0174 5F5F696E 		.ascii	"__int32_t\000"
+ 493      7433325F 
+ 493      7400
+ 494              	.LASF0:
+ 495 017e 666C6F61 		.ascii	"float\000"
+ 495      7400
+ 496              	.LASF3:
+ 497 0184 73686F72 		.ascii	"short int\000"
+ 497      7420696E 
+ 497      7400
+ 498              	.LASF11:
+ 499 018e 696E7433 		.ascii	"int32_t\000"
+ 499      325F7400 
+ 500              	.LASF14:
+ 501 0196 73697A65 		.ascii	"sizetype\000"
+ 501      74797065 
+ 501      00
+ 502              	.LASF19:
+ 503 019f 43757374 		.ascii	"Custom_exp\000"
+ 503      6F6D5F65 
+ 503      787000
+ 504              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 4.9.3 20150303 (release) [ARM/embedded-4_9-br
