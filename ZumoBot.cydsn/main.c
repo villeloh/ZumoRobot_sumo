@@ -13,6 +13,7 @@
 #include "Motor.h"
 #include "Ultra.h"
 #include "Reflectance.h"
+#include "IR.h"
 
 // Declare used functions.
 int rread(void);
@@ -31,20 +32,23 @@ int main()
     // ==================== CRUCIAL DEFINITIONS ======================================= //
     
     // (Maximum) movement speed of the robot.
-    uint8 speed = 240;
+    uint8 speed = 200;
     
     // Reflectance thresholds (determined experimentally) for use in different movement behaviours.
-    int black_threshold_l3 = 16000; // actual line edge value: somewhere betwen 20 000 - 21 000.
+    int black_threshold_l3 = 15000; // actual line edge value: somewhere betwen 20 000 - 21 000.
     int black_threshold_l1 = 18000; // 'sure bet' working value: 17 500 // actual line edge value: ~16 000 // 18 000
     int black_threshold_r1 = 22500; // 'sure bet' working value: 22 000 // actual line edge value: ~18 000 // 22 600
-    int black_threshold_r3 = 16000; // actual line edge value: somewhere between 20 000 - 21 500.
+    int black_threshold_r3 = 15000; // actual line edge value: somewhere between 20 000 - 21 500.
  
     // ==================== OTHER STUFFS ======================================= //
         
     // Needed for using the button to start the robot's movement routine.
     int buttonPress = 0;
     uint8 button; // make button exist
-   
+    
+    // Needed for stopping at the first black line and waiting for IR signal.
+    int firstStop_flag = 0;
+
     // Direction flag for correct turning behaviour. '0' = 'left turn', '1' = 'right turn'.
     int dir_flag;
     
@@ -67,7 +71,7 @@ int main()
     sensor_isr_StartEx(sensor_isr_handler); 
     reflectance_set_threshold(black_threshold_l3, black_threshold_l1, black_threshold_r1, black_threshold_r3);  
     reflectance_start();
-    //IR_led_Write(1);
+    IR_led_Write(1);
 
     BatteryLed_Write(0); // Switch led off 
   
@@ -82,7 +86,30 @@ int main()
             CyDelay(10);
         }
     }
-     
+    
+    while (firstStop_flag == 0)
+    {
+    
+        // Go forward at low speed until meeting the first horizontal black line.
+        // Then wait for the IR signal to proceed.
+        Custom_forward(speed/2.5);
+        
+        reflectance_read(&ref);
+        reflectance_digital(&dig);
+        
+        if (dig.l3 == 0 && dig.r3 == 0)
+        {
+            motor_forward(0,0);
+            firstStop_flag = 1;
+        }
+        
+        CyDelay(1);
+    
+    }
+    
+    // Wait for IR signal. Upon getting it, proceed forward.
+    get_IR();
+
     // ==== SUMO LOGIC ('THE SPIRAL HUNTER™') ============================================================== //
 
 	int turnFactor = 12000;
@@ -90,9 +117,9 @@ int main()
     int turn_flag = 1;   
     uint32 turnDel;
 
-    // Full speed ahead for 0.5 seconds (to reach the center).    
+    // Full speed ahead for 0.7 seconds (to reach the center).    
     Custom_forward(speed);
-    CyDelay(500); // <== experimental value; enough to make it to the center, or close to it.
+    CyDelay(700); // <== experimental value; enough to make it to the center, or close to it.
 
     // Turn to the left (direction is arbitrary at this juncture).
 	dir_flag = 0;
@@ -132,6 +159,10 @@ int main()
         Turn(turnFactor/50, dir_flag);
         
         }
+        
+        // read blackness value
+        reflectance_read(&ref);
+        reflectance_digital(&dig);
      
         // 'Ramming' logic.
         // If the ultrasound sensor detects an object within 20 'units', 
@@ -139,19 +170,16 @@ int main()
         if (Ultra_GetDistance() < 20) // <== experimental 'hunt distance'
         {
             Custom_forward(speed);
-    	    turn_flag = 0;   
+    	    turn_flag = 0;
         }
-            
-        // read blackness value
-        reflectance_read(&ref);
-        reflectance_digital(&dig);
         
+                    
         // (These ifs could be refined further, but it's more work than it's worth, imo.)      
         // If both sensors are activated, back up for a bit and then re-start outward turn.
         if (dig.l3 == 0 && dig.r3 == 0) {
             
-            Custom_backward(240);
-            CyDelay(500); // temp value
+            Custom_backward(140);
+            CyDelay(400); // temp value
             MotorDirLeft_Write(0);
             MotorDirRight_Write(0);
             dir_flag = 0;
@@ -160,9 +188,31 @@ int main()
 	        turn_flag = 1;
         
           // If the left sensor is activated, turn sharply to the right and then begin inward spiral turn.  
-        } else if (dig.l3 == 0) {
+        }  else if (dig.l3 == 0 && ref.r3 >= 10000) {
+        
+            Custom_backward(140);
+            CyDelay(400); // temp value
+            MotorDirLeft_Write(0);
+            MotorDirRight_Write(0);
+            dir_flag = 0;
+	        turnFactor = 12000;
+	        outwardFlag = 1;
+	        turn_flag = 1;
+     
+        } else if (dig.r3 == 0 && ref.l3 >= 10000) {
+        
+            Custom_backward(140);
+            CyDelay(400); // temp value
+            MotorDirLeft_Write(0);
+            MotorDirRight_Write(0);
+            dir_flag = 0;
+	        turnFactor = 12000;
+	        outwardFlag = 1;
+	        turn_flag = 1;
+
+        }  else if (dig.l3 == 0) {
             
-            turnDel = 480000/ref.l3; // 480k is an experimental constant; leads to a very sharp turn
+            turnDel = 520000/ref.l3; // 480k is an experimental constant; leads to a very sharp turn
             Ultrasharp_turn(turnDel,1);
             MotorDirLeft_Write(0);
             MotorDirRight_Write(0);
@@ -174,7 +224,7 @@ int main()
           // If the right sensor is activated, turn sharply to the left and then begin inward spiral turn.    
         } else if (dig.r3 == 0) {
                 
-            turnDel = 480000/ref.r3; // // 480k is an experimental constant; leads to a very sharp turn
+            turnDel = 520000/ref.r3; // // 480k is an experimental constant; leads to a very sharp turn
             Ultrasharp_turn(turnDel,0);
             MotorDirLeft_Write(0);
             MotorDirRight_Write(0);
