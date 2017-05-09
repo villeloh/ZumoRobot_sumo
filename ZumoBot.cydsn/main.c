@@ -206,16 +206,8 @@ int main()
 	        turnFactor = 5000; // some 'head start' is needed to make the turn sharp enough
 	        outwardFlag = 0;
 	        turn_flag = 1;
-        } 
-
-    	// NOTE: The robot will get 'desynched' after one or more 'hunt' episodes, because the angle of approach to the black line affects the new 'starting point' 
-    	// of the 'reset' turn logic, meaning that the robot will overrun the center-point when turnFactor reaches max value... Then the new spiral will be 
-    	// similarly 'desynchronized'; etc. The perfect spiral pattern that was in effect before the hunt(s) can never be reached again, because there's no 
-    	// way to find the center-point again after the very beginning. However, it should not matter a whole lot, because the overall movement pattern will 		
-    	// remain spiral-ish in spite of these distortions.
-        
-    }
-    
+        }    
+    }  
 }
     
 // ===================================================================================================================== //
