@@ -36,8 +36,8 @@ int main()
     
     // Reflectance thresholds (determined experimentally) for use in different movement behaviours.
     int black_threshold_l3 = 15000; // actual line edge value: somewhere betwen 20 000 - 21 000.
-    int black_threshold_l1 = 18000; // 'sure bet' working value: 17 500 // actual line edge value: ~16 000 // 18 000
-    int black_threshold_r1 = 22500; // 'sure bet' working value: 22 000 // actual line edge value: ~18 000 // 22 600
+    int black_threshold_l1 = 18000; // actual line edge value: ~16 000
+    int black_threshold_r1 = 22500; // actual line edge value: ~18 000
     int black_threshold_r3 = 15000; // actual line edge value: somewhere between 20 000 - 21 500.
  
     // ==================== OTHER STUFFS ======================================= //
@@ -62,12 +62,10 @@ int main()
     ADC_Battery_Start();   
     Ultra_Start();
     
-    Measure_Voltage(); // measure battery voltage at robot start
-    
     motor_start(); // start the motor
     motor_forward(0, 0); // stop the motor at robot start, as it seems to run at a low speed if simply started up
     
-    // Initialize IR sensors.
+    // Initialize reflectance sensors.
     sensor_isr_StartEx(sensor_isr_handler); 
     reflectance_set_threshold(black_threshold_l3, black_threshold_l1, black_threshold_r1, black_threshold_r3);  
     reflectance_start();
@@ -117,9 +115,9 @@ int main()
     int turn_flag = 1;   
     uint32 turnDel;
 
-    // Full speed ahead for 0.7 seconds (to reach the center).    
+    // Full speed ahead for 0.7 seconds (to reach the center of the circle).    
     Custom_forward(speed);
-    CyDelay(700); // <== experimental value; enough to make it to the center, or close to it.
+    CyDelay(700);
 
     // Turn to the left (direction is arbitrary at this juncture).
 	dir_flag = 0;
@@ -167,19 +165,17 @@ int main()
         // 'Ramming' logic.
         // If the ultrasound sensor detects an object within 20 'units', 
         // drive towards it at full speed and disable turn logic (until meeting black line).
-        if (Ultra_GetDistance() < 20) // <== experimental 'hunt distance'
+        if (Ultra_GetDistance() < 20)
         {
             Custom_forward(speed);
     	    turn_flag = 0;
         }
-        
-                    
-        // (These ifs could be refined further, but it's more work than it's worth, imo.)      
-        // If both sensors are activated, back up for a bit and then re-start outward turn.
-        if (dig.l3 == 0 && dig.r3 == 0) {
+           
+        // If both sensors are activated, or one is and the second one is about to be, back up for a bit and then re-start outward turn.
+        if ( (dig.l3 == 0 && dig.r3 == 0) || (dig.l3 == 0 && ref.r3 >= 10000) || (dig.r3 == 0 && ref.l3 >= 10000) ) {
             
-            Custom_backward(140);
-            CyDelay(400); // temp value
+            Custom_backward(140); // low speed in order to prevent 'bump issues'
+            CyDelay(400);
             MotorDirLeft_Write(0);
             MotorDirRight_Write(0);
             dir_flag = 0;
@@ -187,32 +183,10 @@ int main()
 	        outwardFlag = 1;
 	        turn_flag = 1;
         
-          // If the left sensor is activated, turn sharply to the right and then begin inward spiral turn.  
-        }  else if (dig.l3 == 0 && ref.r3 >= 10000) {
-        
-            Custom_backward(140);
-            CyDelay(400); // temp value
-            MotorDirLeft_Write(0);
-            MotorDirRight_Write(0);
-            dir_flag = 0;
-	        turnFactor = 12000;
-	        outwardFlag = 1;
-	        turn_flag = 1;
-     
-        } else if (dig.r3 == 0 && ref.l3 >= 10000) {
-        
-            Custom_backward(140);
-            CyDelay(400); // temp value
-            MotorDirLeft_Write(0);
-            MotorDirRight_Write(0);
-            dir_flag = 0;
-	        turnFactor = 12000;
-	        outwardFlag = 1;
-	        turn_flag = 1;
-
+            // If only the left sensor is activated, turn sharply to the right using a special function, and then begin inward spiral turn. 
         }  else if (dig.l3 == 0) {
             
-            turnDel = 520000/ref.l3; // 480k is an experimental constant; leads to a very sharp turn
+            turnDel = 520000/ref.l3; // 520k leads to a very sharp turn, but not too sharp
             Ultrasharp_turn(turnDel,1);
             MotorDirLeft_Write(0);
             MotorDirRight_Write(0);
@@ -221,10 +195,10 @@ int main()
     	    outwardFlag = 0;
     	    turn_flag = 1;
                 
-          // If the right sensor is activated, turn sharply to the left and then begin inward spiral turn.    
+          // If only the right sensor is activated, turn sharply to the left using a special function, and then begin inward spiral turn.  
         } else if (dig.r3 == 0) {
                 
-            turnDel = 520000/ref.r3; // // 480k is an experimental constant; leads to a very sharp turn
+            turnDel = 520000/ref.r3; // // 520k leads to a very sharp turn, but not too sharp
             Ultrasharp_turn(turnDel,0);
             MotorDirLeft_Write(0);
             MotorDirRight_Write(0);
@@ -241,7 +215,7 @@ int main()
     	// remain spiral-ish in spite of these distortions.
         
     }
-        
+    
 }
     
 // ===================================================================================================================== //
