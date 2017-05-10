@@ -6,7 +6,7 @@
 
 #Build Date:         Apr 29 2016 09:00:55
 
-#File Generated:     May 8 2017 12:46:36
+#File Generated:     May 10 2017 09:09:28
 
 #Purpose:            
 
@@ -98,7 +98,7 @@ Clock: timer_clock_5        | Frequency:  48.5 MHz | Target:   0.0 MHz
                      End of Clock Summary
 ######################################################################
 
-D2088: Phase 6, elapsed time : 0.0 (sec)
+D2088: Phase 6, elapsed time : 0.1 (sec)
 
 Phase 7
 ######################################################################

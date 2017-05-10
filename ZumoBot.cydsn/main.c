@@ -186,7 +186,7 @@ int main()
             // If only the left sensor is activated, turn sharply to the right using a special function, and then begin inward spiral turn. 
         }  else if (dig.l3 == 0) {
             
-            turnDel = 520000/ref.l3; // 520k leads to a very sharp turn, but not too sharp
+            turnDel = 600000/ref.l3; // 520k leads to a very sharp turn, but not too sharp
             Ultrasharp_turn(turnDel,1);
             MotorDirLeft_Write(0);
             MotorDirRight_Write(0);
@@ -198,7 +198,7 @@ int main()
           // If only the right sensor is activated, turn sharply to the left using a special function, and then begin inward spiral turn.  
         } else if (dig.r3 == 0) {
                 
-            turnDel = 520000/ref.r3; // // 520k leads to a very sharp turn, but not too sharp
+            turnDel = 600000/ref.r3; // // 520k leads to a very sharp turn, but not too sharp
             Ultrasharp_turn(turnDel,0);
             MotorDirLeft_Write(0);
             MotorDirRight_Write(0);
